@@ -1,0 +1,111 @@
+/// Employee dimension listing 30 sales associates and store managers across the FNAC network.
+table DimEmployee
+	lineageTag: ee000000-0000-0000-0000-000000000000
+
+	/// Surrogate primary key of the employee. Joins FactSales[EmployeeKey]. Hidden.
+	column EmployeeKey
+		dataType: int64
+		isHidden
+		lineageTag: ee010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: EmployeeKey
+
+		annotation SummarizationSetBy = User
+
+	/// Business-facing employee number (EMP-001..EMP-030).
+	column EmployeeCode
+		dataType: string
+		lineageTag: ee020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: EmployeeCode
+
+		annotation SummarizationSetBy = User
+
+	/// Full display name (First Last) of the employee.
+	column EmployeeName
+		dataType: string
+		lineageTag: ee030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: EmployeeName
+
+		annotation SummarizationSetBy = User
+
+	/// Sales department (e.g. Books, Electronics, Media, Management).
+	column Department
+		dataType: string
+		lineageTag: ee040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = User
+
+	/// Job role (Sales Associate, Cashier, Store Manager).
+	column JobRole
+		dataType: string
+		lineageTag: ee050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: JobRole
+
+		annotation SummarizationSetBy = User
+
+	/// Date the employee joined FNAC.
+	column HireDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: ee060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: HireDate
+
+		annotation SummarizationSetBy = User
+
+	partition DimEmployee = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [
+				            EmployeeKey = Int64.Type,
+				            EmployeeCode = text,
+				            EmployeeName = text,
+				            Department = text,
+				            JobRole = text,
+				            HireDate = date
+				        ],
+				        {
+				            {1,  "EMP-001", "Julien Martin",       "Books",          "Sales Associate", #date(2018, 3, 12)},
+				            {2,  "EMP-002", "Camille Bernard",     "Books",          "Sales Associate", #date(2019, 6, 5)},
+				            {3,  "EMP-003", "Antoine Dubois",      "Books",          "Store Manager",   #date(2010, 1, 20)},
+				            {4,  "EMP-004", "Sophie Thomas",       "Music",          "Sales Associate", #date(2020, 9, 10)},
+				            {5,  "EMP-005", "Nicolas Robert",      "Music",          "Sales Associate", #date(2021, 4, 22)},
+				            {6,  "EMP-006", "Élodie Richard",      "Video",          "Sales Associate", #date(2017, 11, 3)},
+				            {7,  "EMP-007", "Maxime Petit",        "Video",          "Sales Associate", #date(2022, 2, 14)},
+				            {8,  "EMP-008", "Léa Durand",          "Gaming",         "Sales Associate", #date(2019, 8, 30)},
+				            {9,  "EMP-009", "Théo Leroy",          "Gaming",         "Sales Associate", #date(2020, 5, 18)},
+				            {10, "EMP-010", "Clara Moreau",        "Gaming",         "Store Manager",   #date(2013, 7, 25)},
+				            {11, "EMP-011", "Hugo Simon",          "TV & Audio",     "Sales Associate", #date(2018, 10, 8)},
+				            {12, "EMP-012", "Manon Laurent",       "TV & Audio",     "Sales Associate", #date(2021, 1, 15)},
+				            {13, "EMP-013", "Louis Lefebvre",      "TV & Audio",     "Sales Associate", #date(2022, 6, 20)},
+				            {14, "EMP-014", "Chloé Michel",        "Photo",          "Sales Associate", #date(2019, 3, 12)},
+				            {15, "EMP-015", "Romain Garcia",       "Photo",          "Store Manager",   #date(2012, 4, 18)},
+				            {16, "EMP-016", "Emma David",          "Computing",      "Sales Associate", #date(2020, 11, 2)},
+				            {17, "EMP-017", "Lucas Bertrand",      "Computing",      "Sales Associate", #date(2021, 9, 27)},
+				            {18, "EMP-018", "Sarah Roux",          "Computing",      "Sales Associate", #date(2022, 4, 4)},
+				            {19, "EMP-019", "Alexandre Vincent",   "Computing",      "Store Manager",   #date(2011, 12, 1)},
+				            {20, "EMP-020", "Marion Fournier",     "Smartphones",    "Sales Associate", #date(2019, 5, 16)},
+				            {21, "EMP-021", "Baptiste Morel",      "Smartphones",    "Sales Associate", #date(2020, 8, 11)},
+				            {22, "EMP-022", "Inès Girard",         "Smartphones",    "Sales Associate", #date(2022, 10, 5)},
+				            {23, "EMP-023", "Paul André",          "Home Appliances","Sales Associate", #date(2018, 6, 9)},
+				            {24, "EMP-024", "Anaïs Lambert",       "Home Appliances","Sales Associate", #date(2021, 2, 28)},
+				            {25, "EMP-025", "Yanis Bonnet",        "Cashier",        "Cashier",         #date(2022, 7, 7)},
+				            {26, "EMP-026", "Léna François",       "Cashier",        "Cashier",         #date(2023, 1, 30)},
+				            {27, "EMP-027", "Enzo Mercier",        "Cashier",        "Cashier",         #date(2023, 5, 15)},
+				            {28, "EMP-028", "Camille Blanc",       "Online",         "Sales Associate", #date(2020, 2, 12)},
+				            {29, "EMP-029", "Nathan Guerin",       "Online",         "Sales Associate", #date(2021, 6, 24)},
+				            {30, "EMP-030", "Zoé Boyer",           "Online",         "Store Manager",   #date(2015, 9, 3)}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

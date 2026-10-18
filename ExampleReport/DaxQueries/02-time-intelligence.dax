@@ -1,0 +1,73 @@
+// ============================================================
+// Sales Retail — Time Intelligence DAX Queries
+// ============================================================
+
+
+// -----------------------------------------------------------------
+// Q1. Monthly revenue vs. prior-year revenue (line-chart shape)
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimDate[YearMonth],
+        DimDate[YearMonthNumber],
+        "Revenue",       [Total Revenue],
+        "Revenue LY",    [Revenue LY],
+        "YoY %",         [Revenue YoY %]
+    )
+    ORDER BY DimDate[YearMonthNumber] ASC
+
+
+// -----------------------------------------------------------------
+// Q2. Year-to-date revenue, profit and units per quarter
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimDate[Year],
+        DimDate[Quarter],
+        "Revenue",       [Total Revenue],
+        "Revenue YTD",   [Revenue YTD],
+        "Profit YTD",    [Profit YTD],
+        "Units YTD",     [Units YTD]
+    )
+    ORDER BY DimDate[Year], DimDate[Quarter]
+
+
+// -----------------------------------------------------------------
+// Q3. Full-year comparison: 2024 vs 2025
+// -----------------------------------------------------------------
+EVALUATE
+    ROW(
+        "Revenue 2024",  CALCULATE([Total Revenue], DimDate[Year] = 2024),
+        "Revenue 2025",  CALCULATE([Total Revenue], DimDate[Year] = 2025),
+        "Growth %",
+            DIVIDE(
+                CALCULATE([Total Revenue], DimDate[Year] = 2025) - CALCULATE([Total Revenue], DimDate[Year] = 2024),
+                CALCULATE([Total Revenue], DimDate[Year] = 2024)
+            )
+    )
+
+
+// -----------------------------------------------------------------
+// Q4. Rolling 12-month revenue by month
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimDate[YearMonth],
+        DimDate[YearMonthNumber],
+        "Revenue R12M", [Revenue Rolling 12M],
+        "Revenue MTD",  [Revenue MTD]
+    )
+    ORDER BY DimDate[YearMonthNumber] ASC
+
+
+// -----------------------------------------------------------------
+// Q5. Weekday vs. weekend performance for the current year
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimDate[IsWeekend],
+        FILTER(ALL(DimDate[Year]), DimDate[Year] = 2025),
+        "Number of Orders",   [Number of Orders],
+        "Total Revenue",      [Total Revenue],
+        "Average Order Value",[Average Order Value]
+    )

@@ -1,0 +1,151 @@
+﻿CustomerKey,CustomerCode,CustomerName,LoyaltySegment,AgeGroup,Gender,City,PostalCode,Country,SignupDate
+1,CUST-00001,Sophie Durand,Adhérent,50-64,M,Bordeaux,33000,France,2018-01-30
+2,CUST-00002,Louis Garcia,Adhérent,25-34,F,Nice,06000,France,2018-02-28
+3,CUST-00003,Camille Girard,Adhérent Plus,65+,M,Lyon,69001,France,2018-03-29
+4,CUST-00004,Julien Guerin,Adhérent One,35-49,F,Nantes,44000,France,2018-04-27
+5,CUST-00005,Sarah Richard,Standard,18-24,M,Paris,75011,France,2018-05-26
+6,CUST-00006,Théo Lefebvre,Adhérent,50-64,F,Lille,59000,France,2018-06-24
+7,CUST-00007,Anaïs Fournier,Adhérent,25-34,M,Rennes,35000,France,2018-07-23
+8,CUST-00008,Romain Mercier,Adhérent Plus,65+,F,Marseille,13001,France,2018-08-21
+9,CUST-00009,Marion Thomas,Adhérent One,35-49,M,Strasbourg,67000,France,2018-09-19
+10,CUST-00010,Jean Simon,Standard,18-24,F,Paris,75016,France,2018-10-18
+11,CUST-00011,Sophie Roux,Adhérent,50-64,M,Toulouse,31000,France,2018-11-16
+12,CUST-00012,Louis Bonnet,Adhérent,25-34,F,Paris,75001,France,2018-12-15
+13,CUST-00013,Camille Bernard,Adhérent Plus,65+,M,Bordeaux,33000,France,2019-01-13
+14,CUST-00014,Julien Leroy,Adhérent One,35-49,F,Nice,06000,France,2019-02-11
+15,CUST-00015,Sarah David,Standard,18-24,M,Lyon,69001,France,2019-03-12
+16,CUST-00016,Théo André,Adhérent,50-64,F,Nantes,44000,France,2019-04-10
+17,CUST-00017,Anaïs Boyer,Adhérent,25-34,M,Paris,75011,France,2019-05-09
+18,CUST-00018,Romain Petit,Adhérent Plus,65+,F,Lille,59000,France,2019-06-07
+19,CUST-00019,Marion Michel,Adhérent One,35-49,M,Rennes,35000,France,2019-07-06
+20,CUST-00020,Jean Morel,Standard,18-24,F,Marseille,13001,France,2019-08-04
+21,CUST-00021,Sophie Blanc,Adhérent,50-64,M,Strasbourg,67000,France,2019-09-02
+22,CUST-00022,Louis Robert,Adhérent,25-34,F,Paris,75016,France,2019-10-01
+23,CUST-00023,Camille Laurent,Adhérent Plus,65+,M,Toulouse,31000,France,2019-10-30
+24,CUST-00024,Julien Vincent,Adhérent One,35-49,F,Paris,75001,France,2019-11-28
+25,CUST-00025,Sarah François,Standard,18-24,M,Bordeaux,33000,France,2019-12-27
+26,CUST-00026,Théo Dubois,Adhérent,50-64,F,Nice,06000,France,2020-01-25
+27,CUST-00027,Anaïs Moreau,Adhérent,25-34,M,Lyon,69001,France,2020-02-23
+28,CUST-00028,Romain Bertrand,Adhérent Plus,65+,F,Nantes,44000,France,2020-03-23
+29,CUST-00029,Marion Lambert,Adhérent One,35-49,M,Paris,75011,France,2020-04-21
+30,CUST-00030,Jean Martin,Standard,18-24,F,Lille,59000,France,2020-05-20
+31,CUST-00031,Sophie Durand,Adhérent,50-64,M,Rennes,35000,France,2020-06-18
+32,CUST-00032,Louis Garcia,Adhérent,25-34,F,Marseille,13001,France,2020-07-17
+33,CUST-00033,Camille Girard,Adhérent Plus,65+,M,Strasbourg,67000,France,2020-08-15
+34,CUST-00034,Julien Guerin,Adhérent One,35-49,F,Paris,75016,France,2020-09-13
+35,CUST-00035,Sarah Richard,Standard,18-24,M,Toulouse,31000,France,2020-10-12
+36,CUST-00036,Théo Lefebvre,Adhérent,50-64,F,Paris,75001,France,2020-11-10
+37,CUST-00037,Anaïs Fournier,Adhérent,25-34,M,Bordeaux,33000,France,2020-12-09
+38,CUST-00038,Romain Mercier,Adhérent Plus,65+,F,Nice,06000,France,2021-01-07
+39,CUST-00039,Marion Thomas,Adhérent One,35-49,M,Lyon,69001,France,2021-02-05
+40,CUST-00040,Jean Simon,Standard,18-24,F,Nantes,44000,France,2021-03-06
+41,CUST-00041,Sophie Roux,Adhérent,50-64,M,Paris,75011,France,2021-04-04
+42,CUST-00042,Louis Bonnet,Adhérent,25-34,F,Lille,59000,France,2021-05-03
+43,CUST-00043,Camille Bernard,Adhérent Plus,65+,M,Rennes,35000,France,2021-06-01
+44,CUST-00044,Julien Leroy,Adhérent One,35-49,F,Marseille,13001,France,2021-06-30
+45,CUST-00045,Sarah David,Standard,18-24,M,Strasbourg,67000,France,2021-07-29
+46,CUST-00046,Théo André,Adhérent,50-64,F,Paris,75016,France,2021-08-27
+47,CUST-00047,Anaïs Boyer,Adhérent,25-34,M,Toulouse,31000,France,2021-09-25
+48,CUST-00048,Romain Petit,Adhérent Plus,65+,F,Paris,75001,France,2021-10-24
+49,CUST-00049,Marion Michel,Adhérent One,35-49,M,Bordeaux,33000,France,2021-11-22
+50,CUST-00050,Jean Morel,Standard,18-24,F,Nice,06000,France,2021-12-21
+51,CUST-00051,Sophie Blanc,Adhérent,50-64,M,Lyon,69001,France,2022-01-19
+52,CUST-00052,Louis Robert,Adhérent,25-34,F,Nantes,44000,France,2022-02-17
+53,CUST-00053,Camille Laurent,Adhérent Plus,65+,M,Paris,75011,France,2022-03-18
+54,CUST-00054,Julien Vincent,Adhérent One,35-49,F,Lille,59000,France,2022-04-16
+55,CUST-00055,Sarah François,Standard,18-24,M,Rennes,35000,France,2022-05-15
+56,CUST-00056,Théo Dubois,Adhérent,50-64,F,Marseille,13001,France,2022-06-13
+57,CUST-00057,Anaïs Moreau,Adhérent,25-34,M,Strasbourg,67000,France,2022-07-12
+58,CUST-00058,Romain Bertrand,Adhérent Plus,65+,F,Paris,75016,France,2022-08-10
+59,CUST-00059,Marion Lambert,Adhérent One,35-49,M,Toulouse,31000,France,2022-09-08
+60,CUST-00060,Jean Martin,Standard,18-24,F,Paris,75001,France,2022-10-07
+61,CUST-00061,Sophie Durand,Adhérent,50-64,M,Bordeaux,33000,France,2022-11-05
+62,CUST-00062,Louis Garcia,Adhérent,25-34,F,Nice,06000,France,2022-12-04
+63,CUST-00063,Camille Girard,Adhérent Plus,65+,M,Lyon,69001,France,2023-01-02
+64,CUST-00064,Julien Guerin,Adhérent One,35-49,F,Nantes,44000,France,2023-01-31
+65,CUST-00065,Sarah Richard,Standard,18-24,M,Paris,75011,France,2023-03-01
+66,CUST-00066,Théo Lefebvre,Adhérent,50-64,F,Lille,59000,France,2023-03-30
+67,CUST-00067,Anaïs Fournier,Adhérent,25-34,M,Rennes,35000,France,2023-04-28
+68,CUST-00068,Romain Mercier,Adhérent Plus,65+,F,Marseille,13001,France,2023-05-27
+69,CUST-00069,Marion Thomas,Adhérent One,35-49,M,Strasbourg,67000,France,2023-06-25
+70,CUST-00070,Jean Simon,Standard,18-24,F,Paris,75016,France,2023-07-24
+71,CUST-00071,Sophie Roux,Adhérent,50-64,M,Toulouse,31000,France,2023-08-22
+72,CUST-00072,Louis Bonnet,Adhérent,25-34,F,Paris,75001,France,2023-09-20
+73,CUST-00073,Camille Bernard,Adhérent Plus,65+,M,Bordeaux,33000,France,2023-10-19
+74,CUST-00074,Julien Leroy,Adhérent One,35-49,F,Nice,06000,France,2023-11-17
+75,CUST-00075,Sarah David,Standard,18-24,M,Lyon,69001,France,2023-12-16
+76,CUST-00076,Théo André,Adhérent,50-64,F,Nantes,44000,France,2024-01-14
+77,CUST-00077,Anaïs Boyer,Adhérent,25-34,M,Paris,75011,France,2024-02-12
+78,CUST-00078,Romain Petit,Adhérent Plus,65+,F,Lille,59000,France,2024-03-12
+79,CUST-00079,Marion Michel,Adhérent One,35-49,M,Rennes,35000,France,2024-04-10
+80,CUST-00080,Jean Morel,Standard,18-24,F,Marseille,13001,France,2024-05-09
+81,CUST-00081,Sophie Blanc,Adhérent,50-64,M,Strasbourg,67000,France,2024-06-07
+82,CUST-00082,Louis Robert,Adhérent,25-34,F,Paris,75016,France,2024-07-06
+83,CUST-00083,Camille Laurent,Adhérent Plus,65+,M,Toulouse,31000,France,2018-01-08
+84,CUST-00084,Julien Vincent,Adhérent One,35-49,F,Paris,75001,France,2018-02-06
+85,CUST-00085,Sarah François,Standard,18-24,M,Bordeaux,33000,France,2018-03-07
+86,CUST-00086,Théo Dubois,Adhérent,50-64,F,Nice,06000,France,2018-04-05
+87,CUST-00087,Anaïs Moreau,Adhérent,25-34,M,Lyon,69001,France,2018-05-04
+88,CUST-00088,Romain Bertrand,Adhérent Plus,65+,F,Nantes,44000,France,2018-06-02
+89,CUST-00089,Marion Lambert,Adhérent One,35-49,M,Paris,75011,France,2018-07-01
+90,CUST-00090,Jean Martin,Standard,18-24,F,Lille,59000,France,2018-07-30
+91,CUST-00091,Sophie Durand,Adhérent,50-64,M,Rennes,35000,France,2018-08-28
+92,CUST-00092,Louis Garcia,Adhérent,25-34,F,Marseille,13001,France,2018-09-26
+93,CUST-00093,Camille Girard,Adhérent Plus,65+,M,Strasbourg,67000,France,2018-10-25
+94,CUST-00094,Julien Guerin,Adhérent One,35-49,F,Paris,75016,France,2018-11-23
+95,CUST-00095,Sarah Richard,Standard,18-24,M,Toulouse,31000,France,2018-12-22
+96,CUST-00096,Théo Lefebvre,Adhérent,50-64,F,Paris,75001,France,2019-01-20
+97,CUST-00097,Anaïs Fournier,Adhérent,25-34,M,Bordeaux,33000,France,2019-02-18
+98,CUST-00098,Romain Mercier,Adhérent Plus,65+,F,Nice,06000,France,2019-03-19
+99,CUST-00099,Marion Thomas,Adhérent One,35-49,M,Lyon,69001,France,2019-04-17
+100,CUST-00100,Jean Simon,Standard,18-24,F,Nantes,44000,France,2019-05-16
+101,CUST-00101,Sophie Roux,Adhérent,50-64,M,Paris,75011,France,2019-06-14
+102,CUST-00102,Louis Bonnet,Adhérent,25-34,F,Lille,59000,France,2019-07-13
+103,CUST-00103,Camille Bernard,Adhérent Plus,65+,M,Rennes,35000,France,2019-08-11
+104,CUST-00104,Julien Leroy,Adhérent One,35-49,F,Marseille,13001,France,2019-09-09
+105,CUST-00105,Sarah David,Standard,18-24,M,Strasbourg,67000,France,2019-10-08
+106,CUST-00106,Théo André,Adhérent,50-64,F,Paris,75016,France,2019-11-06
+107,CUST-00107,Anaïs Boyer,Adhérent,25-34,M,Toulouse,31000,France,2019-12-05
+108,CUST-00108,Romain Petit,Adhérent Plus,65+,F,Paris,75001,France,2020-01-03
+109,CUST-00109,Marion Michel,Adhérent One,35-49,M,Bordeaux,33000,France,2020-02-01
+110,CUST-00110,Jean Morel,Standard,18-24,F,Nice,06000,France,2020-03-01
+111,CUST-00111,Sophie Blanc,Adhérent,50-64,M,Lyon,69001,France,2020-03-30
+112,CUST-00112,Louis Robert,Adhérent,25-34,F,Nantes,44000,France,2020-04-28
+113,CUST-00113,Camille Laurent,Adhérent Plus,65+,M,Paris,75011,France,2020-05-27
+114,CUST-00114,Julien Vincent,Adhérent One,35-49,F,Lille,59000,France,2020-06-25
+115,CUST-00115,Sarah François,Standard,18-24,M,Rennes,35000,France,2020-07-24
+116,CUST-00116,Théo Dubois,Adhérent,50-64,F,Marseille,13001,France,2020-08-22
+117,CUST-00117,Anaïs Moreau,Adhérent,25-34,M,Strasbourg,67000,France,2020-09-20
+118,CUST-00118,Romain Bertrand,Adhérent Plus,65+,F,Paris,75016,France,2020-10-19
+119,CUST-00119,Marion Lambert,Adhérent One,35-49,M,Toulouse,31000,France,2020-11-17
+120,CUST-00120,Jean Martin,Standard,18-24,F,Paris,75001,France,2020-12-16
+121,CUST-00121,Sophie Durand,Adhérent,50-64,M,Bordeaux,33000,France,2021-01-14
+122,CUST-00122,Louis Garcia,Adhérent,25-34,F,Nice,06000,France,2021-02-12
+123,CUST-00123,Camille Girard,Adhérent Plus,65+,M,Lyon,69001,France,2021-03-13
+124,CUST-00124,Julien Guerin,Adhérent One,35-49,F,Nantes,44000,France,2021-04-11
+125,CUST-00125,Sarah Richard,Standard,18-24,M,Paris,75011,France,2021-05-10
+126,CUST-00126,Théo Lefebvre,Adhérent,50-64,F,Lille,59000,France,2021-06-08
+127,CUST-00127,Anaïs Fournier,Adhérent,25-34,M,Rennes,35000,France,2021-07-07
+128,CUST-00128,Romain Mercier,Adhérent Plus,65+,F,Marseille,13001,France,2021-08-05
+129,CUST-00129,Marion Thomas,Adhérent One,35-49,M,Strasbourg,67000,France,2021-09-03
+130,CUST-00130,Jean Simon,Standard,18-24,F,Paris,75016,France,2021-10-02
+131,CUST-00131,Sophie Roux,Adhérent,50-64,M,Toulouse,31000,France,2021-10-31
+132,CUST-00132,Louis Bonnet,Adhérent,25-34,F,Paris,75001,France,2021-11-29
+133,CUST-00133,Camille Bernard,Adhérent Plus,65+,M,Bordeaux,33000,France,2021-12-28
+134,CUST-00134,Julien Leroy,Adhérent One,35-49,F,Nice,06000,France,2022-01-26
+135,CUST-00135,Sarah David,Standard,18-24,M,Lyon,69001,France,2022-02-24
+136,CUST-00136,Théo André,Adhérent,50-64,F,Nantes,44000,France,2022-03-25
+137,CUST-00137,Anaïs Boyer,Adhérent,25-34,M,Paris,75011,France,2022-04-23
+138,CUST-00138,Romain Petit,Adhérent Plus,65+,F,Lille,59000,France,2022-05-22
+139,CUST-00139,Marion Michel,Adhérent One,35-49,M,Rennes,35000,France,2022-06-20
+140,CUST-00140,Jean Morel,Standard,18-24,F,Marseille,13001,France,2022-07-19
+141,CUST-00141,Sophie Blanc,Adhérent,50-64,M,Strasbourg,67000,France,2022-08-17
+142,CUST-00142,Louis Robert,Adhérent,25-34,F,Paris,75016,France,2022-09-15
+143,CUST-00143,Camille Laurent,Adhérent Plus,65+,M,Toulouse,31000,France,2022-10-14
+144,CUST-00144,Julien Vincent,Adhérent One,35-49,F,Paris,75001,France,2022-11-12
+145,CUST-00145,Sarah François,Standard,18-24,M,Bordeaux,33000,France,2022-12-11
+146,CUST-00146,Théo Dubois,Adhérent,50-64,F,Nice,06000,France,2023-01-09
+147,CUST-00147,Anaïs Moreau,Adhérent,25-34,M,Lyon,69001,France,2023-02-07
+148,CUST-00148,Romain Bertrand,Adhérent Plus,65+,F,Nantes,44000,France,2023-03-08
+149,CUST-00149,Marion Lambert,Adhérent One,35-49,M,Paris,75011,France,2023-04-06
+150,CUST-00150,Jean Martin,Standard,18-24,F,Lille,59000,France,2023-05-05

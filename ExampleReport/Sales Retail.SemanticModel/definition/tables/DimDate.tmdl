@@ -1,0 +1,191 @@
+/// Date dimension providing a continuous calendar from 2023-01-01 to 2026-07-15, with attributes for year, quarter, month, week, and weekday used across all time-based analysis.
+table DimDate
+	lineageTag: aa000000-0000-0000-0000-000000000000
+	dataCategory: Time
+
+	/// Primary date key. Joins FactSales[SaleDate]. Marked as the date column used by DAX time intelligence.
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: aa010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+	/// Integer date key in yyyymmdd format (e.g. 20240115). Hidden helper for optional numeric joins and sorting.
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: aa020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = User
+
+	/// Calendar year (e.g. 2024).
+	column Year
+		dataType: int64
+		lineageTag: aa030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+	/// Calendar quarter number 1-4. Hidden sort helper for Quarter.
+	column QuarterNumber
+		dataType: int64
+		isHidden
+		lineageTag: aa040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: QuarterNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Calendar quarter label (Q1..Q4), sorted by QuarterNumber.
+	column Quarter
+		dataType: string
+		lineageTag: aa050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Quarter
+		sortByColumn: QuarterNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Calendar month number 1-12. Hidden sort helper for MonthName.
+	column MonthNumber
+		dataType: int64
+		isHidden
+		lineageTag: aa060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Month name in English (January..December), sorted by MonthNumber.
+	column MonthName
+		dataType: string
+		lineageTag: aa070000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Integer YYYYMM used to sort YearMonth. Hidden.
+	column YearMonthNumber
+		dataType: int64
+		isHidden
+		lineageTag: aa080000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: YearMonthNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Year and month label (e.g. 2024-01), sorted chronologically.
+	column YearMonth
+		dataType: string
+		lineageTag: aa090000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: YearMonth
+		sortByColumn: YearMonthNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Day of month 1-31.
+	column DayOfMonth
+		dataType: int64
+		lineageTag: aa0a0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: DayOfMonth
+
+		annotation SummarizationSetBy = User
+
+	/// Day of week 1-7 (Monday=1). Hidden sort helper for DayName.
+	column DayOfWeek
+		dataType: int64
+		isHidden
+		lineageTag: aa0b0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+
+		annotation SummarizationSetBy = User
+
+	/// Weekday name (Monday..Sunday), sorted by DayOfWeek.
+	column DayName
+		dataType: string
+		lineageTag: aa0c0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: DayName
+		sortByColumn: DayOfWeek
+
+		annotation SummarizationSetBy = User
+
+	/// ISO week of year 1-53.
+	column WeekOfYear
+		dataType: int64
+		lineageTag: aa0d0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: WeekOfYear
+
+		annotation SummarizationSetBy = User
+
+	/// TRUE if the date is Saturday or Sunday.
+	column IsWeekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: aa0e0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+		annotation SummarizationSetBy = User
+
+	hierarchy 'Calendar Hierarchy'
+		lineageTag: aa0f0000-0000-0000-0000-000000000000
+
+		level Year
+			lineageTag: aa0f0000-0000-0000-0000-000000000001
+			column: Year
+
+		level Quarter
+			lineageTag: aa0f0000-0000-0000-0000-000000000002
+			column: Quarter
+
+		level Month
+			lineageTag: aa0f0000-0000-0000-0000-000000000003
+			column: MonthName
+
+		level Date
+			lineageTag: aa0f0000-0000-0000-0000-000000000004
+			column: Date
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+				    StartDate = #date(2023, 1, 1),
+				    EndDate = #date(2026, 7, 15),
+				    DayCount = Duration.Days(EndDate - StartDate) + 1,
+				    DateList = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+				    Source = Table.FromList(DateList, Splitter.SplitByNothing(), {"Date"}),
+				    T1 = Table.TransformColumnTypes(Source, {{"Date", type date}}),
+				    T2 = Table.AddColumn(T1, "DateKey", each Date.Year([Date]) * 10000 + Date.Month([Date]) * 100 + Date.Day([Date]), Int64.Type),
+				    T3 = Table.AddColumn(T2, "Year", each Date.Year([Date]), Int64.Type),
+				    T4 = Table.AddColumn(T3, "QuarterNumber", each Date.QuarterOfYear([Date]), Int64.Type),
+				    T5 = Table.AddColumn(T4, "Quarter", each "Q" & Text.From(Date.QuarterOfYear([Date])), type text),
+				    T6 = Table.AddColumn(T5, "MonthNumber", each Date.Month([Date]), Int64.Type),
+				    T7 = Table.AddColumn(T6, "MonthName", each Date.MonthName([Date], "en-US"), type text),
+				    T8 = Table.AddColumn(T7, "YearMonthNumber", each Date.Year([Date]) * 100 + Date.Month([Date]), Int64.Type),
+				    T9 = Table.AddColumn(T8, "YearMonth", each Text.From(Date.Year([Date])) & "-" & Text.PadStart(Text.From(Date.Month([Date])), 2, "0"), type text),
+				    T10 = Table.AddColumn(T9, "DayOfMonth", each Date.Day([Date]), Int64.Type),
+				    T11 = Table.AddColumn(T10, "DayOfWeek", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),
+				    T12 = Table.AddColumn(T11, "DayName", each Date.DayOfWeekName([Date], "en-US"), type text),
+				    T13 = Table.AddColumn(T12, "WeekOfYear", each Date.WeekOfYear([Date], Day.Monday), Int64.Type),
+				    T14 = Table.AddColumn(T13, "IsWeekend", each Date.DayOfWeek([Date], Day.Monday) >= 5, type logical),
+				    Final = Table.TransformColumnTypes(T14, {{"Date", type datetime}})
+				in
+				    Final
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,165 @@
+/// Customer dimension of 150 individual customers. Includes loyalty segment (Standard / Adhérent / Adhérent Plus / Adhérent One), demographics, and geography for slicing sales.
+table DimCustomer
+	lineageTag: cc000000-0000-0000-0000-000000000000
+
+	/// Surrogate primary key of the customer. Joins FactSales[CustomerKey]. Hidden.
+	column CustomerKey
+		dataType: int64
+		isHidden
+		lineageTag: cc010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = User
+
+	/// Customer business code (CUST-00001..CUST-00150).
+	column CustomerCode
+		dataType: string
+		lineageTag: cc020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: CustomerCode
+
+		annotation SummarizationSetBy = User
+
+	/// Full name of the customer (First Last).
+	column CustomerName
+		dataType: string
+		lineageTag: cc030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = User
+
+	/// Loyalty tier: Standard, Adhérent, Adhérent Plus, Adhérent One.
+	column LoyaltySegment
+		dataType: string
+		lineageTag: cc040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: LoyaltySegment
+
+		annotation SummarizationSetBy = User
+
+	/// Age bracket of the customer.
+	column AgeGroup
+		dataType: string
+		lineageTag: cc050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: AgeGroup
+
+		annotation SummarizationSetBy = User
+
+	/// Gender of the customer (F/M).
+	column Gender
+		dataType: string
+		lineageTag: cc060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = User
+
+	/// City where the customer lives.
+	column City
+		dataType: string
+		dataCategory: City
+		lineageTag: cc070000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = User
+
+	/// French postal code of the customer.
+	column PostalCode
+		dataType: string
+		dataCategory: PostalCode
+		lineageTag: cc080000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: PostalCode
+
+		annotation SummarizationSetBy = User
+
+	/// Country of the customer.
+	column Country
+		dataType: string
+		dataCategory: Country
+		lineageTag: cc090000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = User
+
+	/// Date the customer signed up.
+	column SignupDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: cc0a0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: SignupDate
+
+		annotation SummarizationSetBy = User
+
+	partition DimCustomer = m
+		mode: import
+		source =
+				let
+				    FirstNames = {"Jean","Marie","Pierre","Sophie","Paul","Emma","Louis","Chloé","Nicolas","Camille","Antoine","Léa","Julien","Manon","Maxime","Sarah","Hugo","Inès","Théo","Zoé","Lucas","Anaïs","Baptiste","Clara","Romain","Élodie","Alexandre","Marion","Yanis","Nathan"},
+				    LastNames  = {"Martin","Bernard","Dubois","Thomas","Robert","Richard","Petit","Durand","Leroy","Moreau","Simon","Laurent","Lefebvre","Michel","Garcia","David","Bertrand","Roux","Vincent","Fournier","Morel","Girard","André","Lambert","Bonnet","François","Mercier","Blanc","Guerin","Boyer"},
+				    CityRows   = {
+				        {"Paris","75001","Île-de-France"},
+				        {"Paris","75011","Île-de-France"},
+				        {"Paris","75016","Île-de-France"},
+				        {"Lyon","69001","Auvergne-Rhône-Alpes"},
+				        {"Marseille","13001","Provence-Alpes-Côte d'Azur"},
+				        {"Bordeaux","33000","Nouvelle-Aquitaine"},
+				        {"Lille","59000","Hauts-de-France"},
+				        {"Toulouse","31000","Occitanie"},
+				        {"Nantes","44000","Pays de la Loire"},
+				        {"Strasbourg","67000","Grand Est"},
+				        {"Nice","06000","Provence-Alpes-Côte d'Azur"},
+				        {"Rennes","35000","Bretagne"}
+				    },
+				    Segments  = {"Standard","Adhérent","Adhérent","Adhérent Plus","Adhérent One"},
+				    AgeGroups = {"18-24","25-34","35-49","50-64","65+"},
+				    Genders   = {"F","M"},
+				    RowCount = 150,
+				    Ids = List.Numbers(1, RowCount),
+				    Records = List.Transform(Ids, (i) =>
+				        let
+				            fn   = FirstNames{Number.Mod(i * 3, List.Count(FirstNames))},
+				            ln   = LastNames{Number.Mod(i * 7, List.Count(LastNames))},
+				            city = CityRows{Number.Mod(i * 5, List.Count(CityRows))},
+				            seg  = Segments{Number.Mod(i * 11, List.Count(Segments))},
+				            age  = AgeGroups{Number.Mod(i * 13, List.Count(AgeGroups))},
+				            gen  = Genders{Number.Mod(i * 17, List.Count(Genders))},
+				            signup = Date.AddDays(#date(2018, 1, 1), Number.Mod(i * 29, 2400))
+				        in
+				            [
+				                CustomerKey    = i,
+				                CustomerCode   = "CUST-" & Text.PadStart(Text.From(i), 5, "0"),
+				                CustomerName   = fn & " " & ln,
+				                LoyaltySegment = seg,
+				                AgeGroup       = age,
+				                Gender         = gen,
+				                City           = city{0},
+				                PostalCode     = city{1},
+				                Country        = "France",
+				                SignupDate     = signup
+				            ]
+				    ),
+				    Table = Table.FromRecords(Records),
+				    Typed = Table.TransformColumnTypes(Table, {
+				        {"CustomerKey", Int64.Type},
+				        {"CustomerCode", type text},
+				        {"CustomerName", type text},
+				        {"LoyaltySegment", type text},
+				        {"AgeGroup", type text},
+				        {"Gender", type text},
+				        {"City", type text},
+				        {"PostalCode", type text},
+				        {"Country", type text},
+				        {"SignupDate", type datetime}
+				    })
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

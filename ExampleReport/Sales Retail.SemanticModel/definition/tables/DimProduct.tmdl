@@ -1,0 +1,169 @@
+/// Product dimension listing the FNAC catalogue across the nine main categories (Books, Music, Video, Gaming, TV & Audio, Photo, Computing, Smartphones & Telecom, Home Appliances).
+table DimProduct
+	lineageTag: bb000000-0000-0000-0000-000000000000
+
+	/// Surrogate primary key of the product. Joins FactSales[ProductKey]. Hidden from consumers.
+	column ProductKey
+		dataType: int64
+		isHidden
+		lineageTag: bb010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = User
+
+	/// Business-facing product code (SKU) such as ELEC-024. Useful for lookups and reporting rows.
+	column ProductCode
+		dataType: string
+		lineageTag: bb020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: ProductCode
+
+		annotation SummarizationSetBy = User
+
+	/// Full product name as displayed on visuals (e.g. "Sony WH-1000XM5 Headphones").
+	column ProductName
+		dataType: string
+		lineageTag: bb030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = User
+
+	/// Top-level product family (e.g. Books, Gaming, TV & Audio). Highest level of the product hierarchy.
+	column Category
+		dataType: string
+		lineageTag: bb040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = User
+
+	/// Subcategory grouping products of the same nature (e.g. Fiction, Console, Smartphone). Second level of the product hierarchy.
+	column Subcategory
+		dataType: string
+		lineageTag: bb050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Subcategory
+
+		annotation SummarizationSetBy = User
+
+	/// Manufacturer or publisher (e.g. Sony, Apple, Gallimard).
+	column Brand
+		dataType: string
+		lineageTag: bb060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Brand
+
+		annotation SummarizationSetBy = User
+
+	/// Recommended retail price in euros. Reference list price; actual sale price may include discounts.
+	column StandardPrice
+		dataType: decimal
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: bb070000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StandardPrice
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Standard cost of goods in euros. Used to compute margin.
+	column StandardCost
+		dataType: decimal
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: bb080000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StandardCost
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	hierarchy 'Product Hierarchy'
+		lineageTag: bb090000-0000-0000-0000-000000000000
+
+		level Category
+			lineageTag: bb090000-0000-0000-0000-000000000001
+			column: Category
+
+		level Subcategory
+			lineageTag: bb090000-0000-0000-0000-000000000002
+			column: Subcategory
+
+		level Product
+			lineageTag: bb090000-0000-0000-0000-000000000003
+			column: ProductName
+
+	partition DimProduct = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [
+				            ProductKey = Int64.Type,
+				            ProductCode = text,
+				            ProductName = text,
+				            Category = text,
+				            Subcategory = text,
+				            Brand = text,
+				            StandardPrice = number,
+				            StandardCost = number
+				        ],
+				        {
+				            {1,  "BOOK-001", "L'Étranger",                              "Books",                    "Fiction",           "Gallimard",     8.90,    4.50},
+				            {2,  "BOOK-002", "1984",                                     "Books",                    "Fiction",           "Gallimard",     9.50,    4.80},
+				            {3,  "BOOK-003", "Sapiens",                                  "Books",                    "Non-Fiction",       "Albin Michel",  24.90,   13.00},
+				            {4,  "BOOK-004", "Astérix le Gaulois",                       "Books",                    "Comics & Manga",    "Hachette",      12.50,   6.20},
+				            {5,  "BOOK-005", "One Piece Tome 1",                         "Books",                    "Comics & Manga",    "Glénat",        6.90,    3.40},
+				            {6,  "BOOK-006", "Le Petit Prince",                          "Books",                    "Children",          "Gallimard",     7.90,    3.90},
+				            {7,  "MUSC-001", "Vinyl Pink Floyd Dark Side of the Moon",  "Music",                    "Vinyl",             "Warner",        34.99,   22.00},
+				            {8,  "MUSC-002", "Vinyl Daft Punk Random Access Memories",  "Music",                    "Vinyl",             "Sony Music",    39.99,   26.00},
+				            {9,  "MUSC-003", "CD Stromae Multitude",                     "Music",                    "CD",                "Universal",     15.99,   10.00},
+				            {10, "MUSC-004", "CD Adele 30",                              "Music",                    "CD",                "Sony Music",    14.99,   9.50},
+				            {11, "MUSC-005", "Vinyl Cleaning Kit",                       "Music",                    "Music Accessory",   "Pro-Ject",      24.90,   12.00},
+				            {12, "VIDO-001", "Blu-ray Interstellar",                     "Video",                    "Blu-ray",           "Warner",        14.99,   8.50},
+				            {13, "VIDO-002", "4K UHD Dune Part 1 & 2",                   "Video",                    "4K UHD",            "Warner",        29.99,   18.00},
+				            {14, "VIDO-003", "Blu-ray Studio Ghibli Collection",         "Video",                    "Blu-ray",           "Wild Side",     89.99,   55.00},
+				            {15, "VIDO-004", "DVD Friends Complete Series",              "Video",                    "DVD",               "Warner",        79.99,   45.00},
+				            {16, "GAME-001", "PS5 Console",                              "Gaming",                   "Console",           "Sony",          549.99,  475.00},
+				            {17, "GAME-002", "Xbox Series X Console",                    "Gaming",                   "Console",           "Microsoft",     549.99,  475.00},
+				            {18, "GAME-003", "Nintendo Switch OLED",                     "Gaming",                   "Console",           "Nintendo",      349.99,  290.00},
+				            {19, "GAME-004", "Elden Ring PS5",                           "Gaming",                   "Video Game",        "Bandai Namco",  69.99,   42.00},
+				            {20, "GAME-005", "Zelda Tears of the Kingdom Switch",        "Gaming",                   "Video Game",        "Nintendo",      69.99,   42.00},
+				            {21, "GAME-006", "FIFA 25 PS5",                              "Gaming",                   "Video Game",        "EA",            79.99,   48.00},
+				            {22, "GAME-007", "DualSense Controller",                     "Gaming",                   "Gaming Accessory",  "Sony",          74.99,   45.00},
+				            {23, "GAME-008", "Gaming Chair Secretlab",                   "Gaming",                   "Gaming Accessory",  "Secretlab",     549.00,  360.00},
+				            {24, "TVAU-001", "Samsung QLED 65"" 4K TV",                  "TV & Audio",               "Television",        "Samsung",       1499.00, 1150.00},
+				            {25, "TVAU-002", "Sony Bravia 55"" OLED TV",                 "TV & Audio",               "Television",        "Sony",          1799.00, 1400.00},
+				            {26, "TVAU-003", "LG UHD 43"" TV",                           "TV & Audio",               "Television",        "LG",            549.00,  410.00},
+				            {27, "TVAU-004", "Sony WH-1000XM5 Headphones",               "TV & Audio",               "Headphones",        "Sony",          349.00,  245.00},
+				            {28, "TVAU-005", "Bose QuietComfort Headphones",             "TV & Audio",               "Headphones",        "Bose",          379.00,  260.00},
+				            {29, "TVAU-006", "AirPods Pro 2",                            "TV & Audio",               "Headphones",        "Apple",         279.00,  220.00},
+				            {30, "TVAU-007", "JBL Charge 5 Speaker",                     "TV & Audio",               "Speaker",           "JBL",           179.99,  115.00},
+				            {31, "TVAU-008", "Sonos Beam Soundbar",                      "TV & Audio",               "Speaker",           "Sonos",         499.00,  360.00},
+				            {32, "PHOT-001", "Canon EOS R6 Mark II",                     "Photo",                    "Camera",            "Canon",         2799.00, 2250.00},
+				            {33, "PHOT-002", "Sony Alpha 7 IV",                          "Photo",                    "Camera",            "Sony",          2699.00, 2200.00},
+				            {34, "PHOT-003", "Sigma 24-70mm f/2.8 Lens",                 "Photo",                    "Lens",              "Sigma",         999.00,  740.00},
+				            {35, "PHOT-004", "Manfrotto Befree Advanced Tripod",         "Photo",                    "Photo Accessory",   "Manfrotto",     189.99,  115.00},
+				            {36, "COMP-001", "Apple MacBook Air M3 13""",                "Computing",                "Laptop",            "Apple",         1299.00, 1080.00},
+				            {37, "COMP-002", "Dell XPS 15 Laptop",                       "Computing",                "Laptop",            "Dell",          2199.00, 1780.00},
+				            {38, "COMP-003", "Lenovo ThinkPad X1 Carbon",                "Computing",                "Laptop",            "Lenovo",        1799.00, 1430.00},
+				            {39, "COMP-004", "iMac 24"" M3 Desktop",                     "Computing",                "Desktop",           "Apple",         1499.00, 1240.00},
+				            {40, "COMP-005", "iPad Pro M4 11"" Tablet",                  "Computing",                "Tablet",            "Apple",         1219.00, 990.00},
+				            {41, "COMP-006", "Samsung Galaxy Tab S10 Tablet",            "Computing",                "Tablet",            "Samsung",       899.00,  710.00},
+				            {42, "COMP-007", "Dell UltraSharp 27"" Monitor",             "Computing",                "Monitor",           "Dell",          449.00,  310.00},
+				            {43, "COMP-008", "Logitech MX Master 3S Mouse",              "Computing",                "Computer Accessory","Logitech",      109.99,  62.00},
+				            {44, "PHON-001", "iPhone 16 Pro 256GB",                      "Smartphones & Telecom",    "Smartphone",        "Apple",         1329.00, 1120.00},
+				            {45, "PHON-002", "Samsung Galaxy S25 Ultra",                 "Smartphones & Telecom",    "Smartphone",        "Samsung",       1469.00, 1220.00},
+				            {46, "PHON-003", "Google Pixel 9 Pro",                       "Smartphones & Telecom",    "Smartphone",        "Google",        1099.00, 870.00},
+				            {47, "PHON-004", "Apple Watch Series 10",                    "Smartphones & Telecom",    "Smartwatch",        "Apple",         449.00,  340.00},
+				            {48, "PHON-005", "Garmin Forerunner 265",                    "Smartphones & Telecom",    "Smartwatch",        "Garmin",        499.00,  370.00},
+				            {49, "PHON-006", "Anker PowerCore 20K",                      "Smartphones & Telecom",    "Phone Accessory",   "Anker",         59.99,   32.00},
+				            {50, "HOME-001", "Nespresso Vertuo Coffee Machine",          "Home Appliances",          "Coffee Machine",    "Nespresso",     199.00,  140.00}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

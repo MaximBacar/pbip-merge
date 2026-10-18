@@ -1,0 +1,147 @@
+/// Store dimension listing the FNAC network — 12 physical French stores plus the online shop FNAC.com.
+table DimStore
+	lineageTag: dd000000-0000-0000-0000-000000000000
+
+	/// Surrogate primary key of the store. Joins FactSales[StoreKey]. Hidden.
+	column StoreKey
+		dataType: int64
+		isHidden
+		lineageTag: dd010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		annotation SummarizationSetBy = User
+
+	/// Business store code (e.g. FR-PAR-01, ONLINE).
+	column StoreCode
+		dataType: string
+		lineageTag: dd020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StoreCode
+
+		annotation SummarizationSetBy = User
+
+	/// Full store name shown in reports (e.g. "Paris - Champs-Élysées").
+	column StoreName
+		dataType: string
+		lineageTag: dd030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StoreName
+
+		annotation SummarizationSetBy = User
+
+	/// City where the store is located; "Online" for the e-commerce channel.
+	column City
+		dataType: string
+		dataCategory: City
+		lineageTag: dd040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = User
+
+	/// French administrative region.
+	column Region
+		dataType: string
+		dataCategory: StateOrProvince
+		lineageTag: dd050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = User
+
+	/// Country of the store.
+	column Country
+		dataType: string
+		dataCategory: Country
+		lineageTag: dd060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = User
+
+	/// Channel type: Flagship, Standard, or Online.
+	column StoreType
+		dataType: string
+		lineageTag: dd070000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StoreType
+
+		annotation SummarizationSetBy = User
+
+	/// Selling surface in square meters (0 for the online store).
+	column FloorAreaSqm
+		dataType: int64
+		formatString: #,0
+		lineageTag: dd080000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: FloorAreaSqm
+
+		annotation SummarizationSetBy = User
+
+	/// Store opening date.
+	column OpeningDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: dd090000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: OpeningDate
+
+		annotation SummarizationSetBy = User
+
+	hierarchy 'Geography Hierarchy'
+		lineageTag: dd0a0000-0000-0000-0000-000000000000
+
+		level Country
+			lineageTag: dd0a0000-0000-0000-0000-000000000001
+			column: Country
+
+		level Region
+			lineageTag: dd0a0000-0000-0000-0000-000000000002
+			column: Region
+
+		level City
+			lineageTag: dd0a0000-0000-0000-0000-000000000003
+			column: City
+
+		level Store
+			lineageTag: dd0a0000-0000-0000-0000-000000000004
+			column: StoreName
+
+	partition DimStore = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [
+				            StoreKey = Int64.Type,
+				            StoreCode = text,
+				            StoreName = text,
+				            City = text,
+				            Region = text,
+				            Country = text,
+				            StoreType = text,
+				            FloorAreaSqm = Int64.Type,
+				            OpeningDate = date
+				        ],
+				        {
+				            {1,  "FR-PAR-01", "Paris - Champs-Élysées",   "Paris",       "Île-de-France",              "France", "Flagship", 4500, #date(1974, 9, 15)},
+				            {2,  "FR-PAR-02", "Paris - Les Halles",        "Paris",       "Île-de-France",              "France", "Standard", 3200, #date(1979, 6, 1)},
+				            {3,  "FR-PAR-03", "Paris - Ternes",            "Paris",       "Île-de-France",              "France", "Standard", 1800, #date(1985, 3, 20)},
+				            {4,  "FR-LYN-01", "Lyon - Part-Dieu",          "Lyon",        "Auvergne-Rhône-Alpes",       "France", "Standard", 2500, #date(1983, 11, 5)},
+				            {5,  "FR-MRS-01", "Marseille - Centre Bourse", "Marseille",   "Provence-Alpes-Côte d'Azur", "France", "Standard", 2100, #date(1988, 4, 10)},
+				            {6,  "FR-BDX-01", "Bordeaux - Sainte-Catherine","Bordeaux",   "Nouvelle-Aquitaine",         "France", "Standard", 1900, #date(1990, 10, 12)},
+				            {7,  "FR-LIL-01", "Lille - Grand Place",       "Lille",       "Hauts-de-France",            "France", "Standard", 2000, #date(1992, 5, 8)},
+				            {8,  "FR-TLS-01", "Toulouse - Wilson",         "Toulouse",    "Occitanie",                  "France", "Standard", 2200, #date(1994, 9, 25)},
+				            {9,  "FR-NAN-01", "Nantes - Bouffay",          "Nantes",      "Pays de la Loire",           "France", "Standard", 1700, #date(1996, 3, 15)},
+				            {10, "FR-STG-01", "Strasbourg - Kléber",       "Strasbourg",  "Grand Est",                  "France", "Standard", 1600, #date(1998, 11, 20)},
+				            {11, "FR-NIC-01", "Nice - Nicetoile",          "Nice",        "Provence-Alpes-Côte d'Azur", "France", "Standard", 1500, #date(2001, 6, 30)},
+				            {12, "FR-REN-01", "Rennes - Colombia",         "Rennes",      "Bretagne",                   "France", "Standard", 1400, #date(2004, 4, 18)},
+				            {13, "FR-ONL-01", "FNAC.com Online Store",     "Online",      "Online",                     "France", "Online",   0,    #date(1999, 10, 1)}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,66 @@
+/// Payment method dimension listing accepted tender types (card, cash, gift card, financing, etc.).
+table DimPaymentMethod
+	lineageTag: ff000000-0000-0000-0000-000000000000
+
+	/// Surrogate primary key. Joins FactSales[PaymentMethodKey]. Hidden.
+	column PaymentMethodKey
+		dataType: int64
+		isHidden
+		lineageTag: ff010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: PaymentMethodKey
+
+		annotation SummarizationSetBy = User
+
+	/// Payment method label used in reports (e.g. "Credit Card").
+	column PaymentMethodName
+		dataType: string
+		lineageTag: ff020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: PaymentMethodName
+
+		annotation SummarizationSetBy = User
+
+	/// Broader tender family: Card, Cash, Gift, Financing.
+	column PaymentGroup
+		dataType: string
+		lineageTag: ff030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: PaymentGroup
+
+		annotation SummarizationSetBy = User
+
+	/// TRUE if this payment method involves electronic authorisation.
+	column IsElectronic
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ff040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: IsElectronic
+
+		annotation SummarizationSetBy = User
+
+	partition DimPaymentMethod = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [
+				            PaymentMethodKey = Int64.Type,
+				            PaymentMethodName = text,
+				            PaymentGroup = text,
+				            IsElectronic = logical
+				        ],
+				        {
+				            {1, "Credit Card",       "Card",       true},
+				            {2, "Debit Card",        "Card",       true},
+				            {3, "Cash",              "Cash",       false},
+				            {4, "Gift Card",         "Gift",       true},
+				            {5, "Financing (3x)",    "Financing",  true}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "VisualContainer4",
+  "position": { "x": 860, "y": 80, "z": 4000, "height": 130, "width": 400 },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": { "SourceRef": { "Entity": "FactSales" } },
+                  "Property": "Orders per Customer"
+                }
+              },
+              "queryRef": "FactSales.Orders per Customer",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": { "expr": { "Literal": { "Value": "28D" } } },
+            "color": {
+              "solid": {
+                "color": { "expr": { "Literal": { "Value": "'#1F3864'" } } }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": { "expr": { "Literal": { "Value": "true" } } }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": { "expr": { "Literal": { "Value": "true" } } },
+            "text": { "expr": { "Literal": { "Value": "'Orders per Customer'" } } },
+            "fontSize": { "expr": { "Literal": { "Value": "12D" } } }
+          }
+        }
+      ]
+    }
+  }
+}

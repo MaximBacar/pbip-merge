@@ -1,0 +1,76 @@
+// ============================================================
+// Sales Retail — Basic Sales DAX Queries
+// Run in Power BI Desktop DAX Query View, DAX Studio, or Tabular Editor.
+// ============================================================
+
+
+// -----------------------------------------------------------------
+// Q1. Top-line KPIs for the whole period
+// -----------------------------------------------------------------
+EVALUATE
+    ROW(
+        "Total Revenue",           [Total Revenue],
+        "Gross Profit",            [Gross Profit],
+        "Gross Margin %",          [Gross Margin %],
+        "Total Units Sold",        [Total Units Sold],
+        "Number of Orders",        [Number of Orders],
+        "Average Order Value",     [Average Order Value],
+        "Average Selling Price",   [Average Selling Price]
+    )
+
+
+// -----------------------------------------------------------------
+// Q2. Revenue and profit by product category, sorted by revenue
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimProduct[Category],
+        "Total Revenue",  [Total Revenue],
+        "Gross Profit",   [Gross Profit],
+        "Gross Margin %", [Gross Margin %],
+        "Units",          [Total Units Sold]
+    )
+    ORDER BY [Total Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q3. Revenue by subcategory within each category
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimProduct[Category],
+        DimProduct[Subcategory],
+        "Total Revenue", [Total Revenue],
+        "Units",         [Total Units Sold]
+    )
+    ORDER BY DimProduct[Category] ASC, [Total Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q4. Sale lines and average discount rate by payment method
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimPaymentMethod[PaymentMethodName],
+        DimPaymentMethod[PaymentGroup],
+        "Number of Orders", [Number of Orders],
+        "Total Revenue",    [Total Revenue],
+        "Discount %",       [Discount %]
+    )
+    ORDER BY [Number of Orders] DESC
+
+
+// -----------------------------------------------------------------
+// Q5. Best-performing brands (top 10 by revenue)
+// -----------------------------------------------------------------
+EVALUATE
+    TOPN(
+        10,
+        SUMMARIZECOLUMNS(
+            DimProduct[Brand],
+            "Total Revenue", [Total Revenue],
+            "Units",         [Total Units Sold]
+        ),
+        [Total Revenue], DESC
+    )
+    ORDER BY [Total Revenue] DESC

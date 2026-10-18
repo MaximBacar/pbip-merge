@@ -1,0 +1,6 @@
+﻿PaymentMethodKey,PaymentMethodName,PaymentGroup,IsElectronic
+1,Credit Card,Card,TRUE
+2,Debit Card,Card,TRUE
+3,Cash,Cash,FALSE
+4,Gift Card,Gift,TRUE
+5,Financing (3x),Financing,TRUE

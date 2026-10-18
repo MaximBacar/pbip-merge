@@ -1,0 +1,24 @@
+relationship 30000000-0000-0000-0000-000000000001
+	fromColumn: FactSales.ProductKey
+	toColumn: DimProduct.ProductKey
+
+relationship 30000000-0000-0000-0000-000000000002
+	fromColumn: FactSales.CustomerKey
+	toColumn: DimCustomer.CustomerKey
+
+relationship 30000000-0000-0000-0000-000000000003
+	fromColumn: FactSales.StoreKey
+	toColumn: DimStore.StoreKey
+
+relationship 30000000-0000-0000-0000-000000000004
+	fromColumn: FactSales.EmployeeKey
+	toColumn: DimEmployee.EmployeeKey
+
+relationship 30000000-0000-0000-0000-000000000005
+	fromColumn: FactSales.PaymentMethodKey
+	toColumn: DimPaymentMethod.PaymentMethodKey
+
+relationship 30000000-0000-0000-0000-000000000006
+	fromColumn: FactSales.SaleDate
+	toColumn: DimDate.Date
+

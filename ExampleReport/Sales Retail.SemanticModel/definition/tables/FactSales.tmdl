@@ -1,0 +1,511 @@
+/// Central sales fact table: one row per order line. 6,000 sales lines spread across 2023-01-01 to 2026-07-15 with product, customer, store, employee, and payment context. Physical columns are hidden; use the DAX measures instead.
+table FactSales
+	lineageTag: f5000000-0000-0000-0000-000000000000
+
+	/// Net sales amount after discount. Currency measure driving revenue analysis. €.
+	measure 'Total Revenue' = SUM(FactSales[NetSalesAmount])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000001
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Gross sales amount before discount. €.
+	measure 'Gross Revenue' = SUM(FactSales[GrossSalesAmount])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000002
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total discount granted to customers. €.
+	measure 'Total Discount' = SUM(FactSales[DiscountAmount])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000003
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Discount as a percentage of gross revenue.
+	measure 'Discount %' = DIVIDE([Total Discount], [Gross Revenue])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000004
+
+	/// Total cost of goods sold. €.
+	measure 'Total Cost' = SUM(FactSales[TotalCost])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000005
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Gross profit = Total Revenue − Total Cost. €.
+	measure 'Gross Profit' = [Total Revenue] - [Total Cost]
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000006
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Gross profit as a percentage of revenue.
+	measure 'Gross Margin %' = DIVIDE([Gross Profit], [Total Revenue])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000007
+
+	/// Total units sold across all products.
+	measure 'Total Units Sold' = SUM(FactSales[Quantity])
+		formatString: #,0
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000008
+
+	/// Distinct number of orders (invoices).
+	measure 'Number of Orders' = DISTINCTCOUNT(FactSales[OrderID])
+		formatString: #,0
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-000000000009
+
+	/// Total sale lines in scope. One row per product line on an order.
+	measure 'Number of Sale Lines' = COUNTROWS(FactSales)
+		formatString: #,0
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-00000000000a
+
+	/// Average revenue per order (Total Revenue ÷ Number of Orders). €.
+	measure 'Average Order Value' = DIVIDE([Total Revenue], [Number of Orders])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-00000000000b
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Average units contained in one order.
+	measure 'Average Units per Order' = DIVIDE([Total Units Sold], [Number of Orders])
+		formatString: 0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-00000000000c
+
+	/// Average selling price per unit (Total Revenue ÷ Total Units). €.
+	measure 'Average Selling Price' = DIVIDE([Total Revenue], [Total Units Sold])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 01 Sales
+		lineageTag: f5000000-0000-0000-0000-00000000000d
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total Revenue year-to-date up to the last visible date. €.
+	measure 'Revenue YTD' = TOTALYTD([Total Revenue], DimDate[Date])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-00000000000e
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total Revenue quarter-to-date. €.
+	measure 'Revenue QTD' = TOTALQTD([Total Revenue], DimDate[Date])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-00000000000f
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total Revenue month-to-date. €.
+	measure 'Revenue MTD' = TOTALMTD([Total Revenue], DimDate[Date])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000010
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Same-period revenue for the previous year, using SAMEPERIODLASTYEAR. €.
+	measure 'Revenue LY' = CALCULATE([Total Revenue], SAMEPERIODLASTYEAR(DimDate[Date]))
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000011
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Absolute variance vs. same period last year: current − prior. €.
+	measure 'Revenue YoY' = [Total Revenue] - [Revenue LY]
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000012
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Year-over-year growth rate.
+	measure 'Revenue YoY %' = DIVIDE([Revenue YoY], [Revenue LY])
+		formatString: +0.00%;-0.00%;0.00%
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000013
+
+	/// Rolling 12-month revenue, ending at the latest date in the current filter context. €.
+	measure 'Revenue Rolling 12M' = CALCULATE([Total Revenue], DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH))
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000014
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Gross profit year-to-date. €.
+	measure 'Profit YTD' = TOTALYTD([Gross Profit], DimDate[Date])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000015
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total units sold year-to-date.
+	measure 'Units YTD' = TOTALYTD([Total Units Sold], DimDate[Date])
+		formatString: #,0
+		displayFolder: 02 Time Intelligence
+		lineageTag: f5000000-0000-0000-0000-000000000016
+
+	/// Distinct customers who purchased in the current filter context.
+	measure 'Number of Customers' = DISTINCTCOUNT(FactSales[CustomerKey])
+		formatString: #,0
+		displayFolder: 03 Customer
+		lineageTag: f5000000-0000-0000-0000-000000000017
+
+	/// Average revenue per customer. €.
+	measure 'Average Revenue per Customer' = DIVIDE([Total Revenue], [Number of Customers])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 03 Customer
+		lineageTag: f5000000-0000-0000-0000-000000000018
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Customers whose loyalty signup date falls in the current date filter context.
+	measure 'New Customers (Signup)' =
+			VAR StartDate = MIN(DimDate[Date])
+			VAR EndDate = MAX(DimDate[Date])
+			RETURN
+			CALCULATE(
+			    DISTINCTCOUNT(DimCustomer[CustomerKey]),
+			    FILTER(
+			        ALL(DimCustomer),
+			        DimCustomer[SignupDate] >= StartDate && DimCustomer[SignupDate] <= EndDate
+			    )
+			)
+		formatString: #,0
+		displayFolder: 03 Customer
+		lineageTag: f5000000-0000-0000-0000-000000000019
+
+	/// Average number of orders placed per active customer.
+	measure 'Orders per Customer' = DIVIDE([Number of Orders], [Number of Customers])
+		formatString: 0.00
+		displayFolder: 03 Customer
+		lineageTag: f5000000-0000-0000-0000-00000000001a
+
+	/// Revenue rank of the current product across all products. Only meaningful when a product row is in scope.
+	measure 'Product Rank by Revenue' =
+			IF(
+			    ISINSCOPE(DimProduct[ProductName]),
+			    RANKX(ALL(DimProduct[ProductName]), [Total Revenue], , DESC, DENSE)
+			)
+		formatString: #,0
+		displayFolder: 04 Ranking
+		lineageTag: f5000000-0000-0000-0000-00000000001b
+
+	/// Revenue rank of the current category across all categories.
+	measure 'Category Rank by Revenue' =
+			IF(
+			    ISINSCOPE(DimProduct[Category]),
+			    RANKX(ALL(DimProduct[Category]), [Total Revenue], , DESC, DENSE)
+			)
+		formatString: #,0
+		displayFolder: 04 Ranking
+		lineageTag: f5000000-0000-0000-0000-00000000001c
+
+	/// Revenue rank of the current store across all stores.
+	measure 'Store Rank by Revenue' =
+			IF(
+			    ISINSCOPE(DimStore[StoreName]),
+			    RANKX(ALL(DimStore[StoreName]), [Total Revenue], , DESC, DENSE)
+			)
+		formatString: #,0
+		displayFolder: 04 Ranking
+		lineageTag: f5000000-0000-0000-0000-00000000001d
+
+	/// Revenue for products ranked in the top 10 by revenue; blank otherwise.
+	measure 'Top 10 Products Revenue' =
+			IF([Product Rank by Revenue] <= 10, [Total Revenue])
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		displayFolder: 04 Ranking
+		lineageTag: f5000000-0000-0000-0000-00000000001e
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Surrogate primary key of the sale line. Hidden.
+	column SaleKey
+		dataType: int64
+		isHidden
+		lineageTag: f5010000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: SaleKey
+
+		annotation SummarizationSetBy = User
+
+	/// Business-facing order identifier (ORD-0000001..). Multiple lines share the same OrderID.
+	column OrderID
+		dataType: string
+		lineageTag: f5020000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = User
+
+	/// Line number within the order (1..N).
+	column OrderLineNumber
+		dataType: int64
+		isHidden
+		lineageTag: f5030000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: OrderLineNumber
+
+		annotation SummarizationSetBy = User
+
+	/// Date of the sale. Joins DimDate[Date]. Hidden — use DimDate columns for slicing.
+	column SaleDate
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: f5040000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: SaleDate
+
+		annotation SummarizationSetBy = User
+
+	/// Foreign key to DimProduct[ProductKey]. Hidden.
+	column ProductKey
+		dataType: int64
+		isHidden
+		lineageTag: f5050000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = User
+
+	/// Foreign key to DimCustomer[CustomerKey]. Hidden.
+	column CustomerKey
+		dataType: int64
+		isHidden
+		lineageTag: f5060000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = User
+
+	/// Foreign key to DimStore[StoreKey]. Hidden.
+	column StoreKey
+		dataType: int64
+		isHidden
+		lineageTag: f5070000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		annotation SummarizationSetBy = User
+
+	/// Foreign key to DimEmployee[EmployeeKey]. Hidden.
+	column EmployeeKey
+		dataType: int64
+		isHidden
+		lineageTag: f5080000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: EmployeeKey
+
+		annotation SummarizationSetBy = User
+
+	/// Foreign key to DimPaymentMethod[PaymentMethodKey]. Hidden.
+	column PaymentMethodKey
+		dataType: int64
+		isHidden
+		lineageTag: f5090000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: PaymentMethodKey
+
+		annotation SummarizationSetBy = User
+
+	/// Quantity of units sold on this line. Hidden — use [Total Units Sold] measure.
+	column Quantity
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: f50a0000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = User
+
+	/// Actual unit price charged. Hidden.
+	column UnitPrice
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f50b0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Discount percentage applied on this line (0..1). Hidden.
+	column DiscountPercent
+		dataType: double
+		isHidden
+		formatString: 0.00%
+		lineageTag: f50c0000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: DiscountPercent
+
+		annotation SummarizationSetBy = User
+
+	/// Discount amount in euros. Hidden — use [Total Discount] measure.
+	column DiscountAmount
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f50d0000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: DiscountAmount
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Gross line amount before discount. Hidden — use [Gross Revenue] measure.
+	column GrossSalesAmount
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f50e0000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: GrossSalesAmount
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Net line amount after discount. Hidden — use [Total Revenue] measure.
+	column NetSalesAmount
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f50f0000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: NetSalesAmount
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Standard unit cost of the product. Hidden.
+	column UnitCost
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f5100000-0000-0000-0000-000000000000
+		summarizeBy: none
+		sourceColumn: UnitCost
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	/// Total cost for the line (UnitCost × Quantity). Hidden — use [Total Cost] measure.
+	column TotalCost
+		dataType: decimal
+		isHidden
+		formatString: \€#,0.00;-\€#,0.00;\€#,0.00
+		lineageTag: f5110000-0000-0000-0000-000000000000
+		summarizeBy: sum
+		sourceColumn: TotalCost
+
+		annotation SummarizationSetBy = User
+		annotation PBI_FormatHint = {"currencyCulture":"fr-FR"}
+
+	partition FactSales = m
+		mode: import
+		source =
+				let
+				    // Product price / cost lookup, indexed by ProductKey (1..50).
+				    PriceList = {
+				        {8.90,    4.50},   {9.50,    4.80},   {24.90,   13.00},  {12.50,   6.20},   {6.90,    3.40},
+				        {7.90,    3.90},   {34.99,   22.00},  {39.99,   26.00},  {15.99,   10.00},  {14.99,   9.50},
+				        {24.90,   12.00},  {14.99,   8.50},   {29.99,   18.00},  {89.99,   55.00},  {79.99,   45.00},
+				        {549.99,  475.00}, {549.99,  475.00}, {349.99,  290.00}, {69.99,   42.00},  {69.99,   42.00},
+				        {79.99,   48.00},  {74.99,   45.00},  {549.00,  360.00}, {1499.00, 1150.00},{1799.00, 1400.00},
+				        {549.00,  410.00}, {349.00,  245.00}, {379.00,  260.00}, {279.00,  220.00}, {179.99,  115.00},
+				        {499.00,  360.00}, {2799.00, 2250.00},{2699.00, 2200.00},{999.00,  740.00}, {189.99,  115.00},
+				        {1299.00, 1080.00},{2199.00, 1780.00},{1799.00, 1430.00},{1499.00, 1240.00},{1219.00, 990.00},
+				        {899.00,  710.00}, {449.00,  310.00}, {109.99,  62.00},  {1329.00, 1120.00},{1469.00, 1220.00},
+				        {1099.00, 870.00}, {449.00,  340.00}, {499.00,  370.00}, {59.99,   32.00},  {199.00,  140.00}
+				    },
+				    PriceLookup = List.Buffer(PriceList),
+				    // Weighted employee / store / payment pools so "count by dimension" is not perfectly flat.
+				    // Managers sell least (weight 2), cashiers most (7-9); flagship & online stores busiest; card payments dominate.
+				    EmpWeights   = {5, 4, 2, 6, 3, 7, 4, 5, 6, 2, 8, 5, 3, 6, 2, 7, 4, 5, 2, 6, 8, 3, 5, 4, 9, 7, 8, 4, 5, 2},
+				    EmpPicks     = List.Buffer(List.Combine(List.Transform(List.Positions(EmpWeights), (p) => List.Repeat({p + 1}, EmpWeights{p})))),
+				    EmpCount     = List.Count(EmpPicks),
+				    StoreWeights = {9, 6, 4, 7, 6, 5, 5, 5, 4, 4, 4, 3, 10},
+				    StorePicks   = List.Buffer(List.Combine(List.Transform(List.Positions(StoreWeights), (p) => List.Repeat({p + 1}, StoreWeights{p})))),
+				    StoreCount   = List.Count(StorePicks),
+				    PayWeights   = {40, 30, 15, 10, 5},
+				    PayPicks     = List.Buffer(List.Combine(List.Transform(List.Positions(PayWeights), (p) => List.Repeat({p + 1}, PayWeights{p})))),
+				    PayCount     = List.Count(PayPicks),
+				    RowCount    = 6000,
+				    StartDate   = #date(2023, 1, 1),
+				    Ids         = List.Numbers(1, RowCount),
+				    Records = List.Transform(Ids, (i) =>
+				        let
+				            // Order-level grouping: 2 lines per order on average.
+				            orderIx     = Number.IntegerDivide(i - 1, 2) + 1,
+				            orderId     = "ORD-" & Text.PadStart(Text.From(1000000 + orderIx), 7, "0"),
+				            lineNumber  = Number.Mod(i - 1, 2) + 1,
+				            dayOffset   = Number.Mod(orderIx * 61, 1292),
+				            saleDate    = Date.AddDays(StartDate, dayOffset),
+				            customerKey = 1 + Number.Mod(orderIx * 43, 150),
+				            storeKey    = StorePicks{Number.Mod(orderIx * 29, StoreCount)},
+				            employeeKey = EmpPicks{Number.Mod(orderIx * 23, EmpCount)},
+				            paymentKey  = PayPicks{Number.Mod(orderIx * 17, PayCount)},
+				            // Line-level values
+				            productKey  = 1 + Number.Mod(i * 37, 50),
+				            qtyMod10    = Number.Mod(i * 11, 10),
+				            quantity    = if qtyMod10 < 7 then 1 else if qtyMod10 < 9 then 2 else 3,
+				            priceRow    = PriceLookup{productKey - 1},
+				            standardPrice = priceRow{0},
+				            standardCost  = priceRow{1},
+				            unitPrice     = standardPrice,
+				            unitCost      = standardCost,
+				            discountPct   = Number.Mod(i * 7, 25) / 100.0,
+				            gross         = Number.Round(unitPrice * quantity, 2),
+				            discountAmt   = Number.Round(gross * discountPct, 2),
+				            net           = gross - discountAmt,
+				            totalCost     = Number.Round(unitCost * quantity, 2)
+				        in
+				            [
+				                SaleKey          = i,
+				                OrderID          = orderId,
+				                OrderLineNumber  = lineNumber,
+				                SaleDate         = saleDate,
+				                ProductKey       = productKey,
+				                CustomerKey      = customerKey,
+				                StoreKey         = storeKey,
+				                EmployeeKey      = employeeKey,
+				                PaymentMethodKey = paymentKey,
+				                Quantity         = quantity,
+				                UnitPrice        = unitPrice,
+				                DiscountPercent  = discountPct,
+				                DiscountAmount   = discountAmt,
+				                GrossSalesAmount = gross,
+				                NetSalesAmount   = net,
+				                UnitCost         = unitCost,
+				                TotalCost        = totalCost
+				            ]
+				    ),
+				    Table = Table.FromRecords(Records),
+				    Typed = Table.TransformColumnTypes(Table, {
+				        {"SaleKey", Int64.Type},
+				        {"OrderID", type text},
+				        {"OrderLineNumber", Int64.Type},
+				        {"SaleDate", type datetime},
+				        {"ProductKey", Int64.Type},
+				        {"CustomerKey", Int64.Type},
+				        {"StoreKey", Int64.Type},
+				        {"EmployeeKey", Int64.Type},
+				        {"PaymentMethodKey", Int64.Type},
+				        {"Quantity", Int64.Type},
+				        {"UnitPrice", type number},
+				        {"DiscountPercent", type number},
+				        {"DiscountAmount", type number},
+				        {"GrossSalesAmount", type number},
+				        {"NetSalesAmount", type number},
+				        {"UnitCost", type number},
+				        {"TotalCost", type number}
+				    })
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

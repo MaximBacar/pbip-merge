@@ -1,0 +1,31 @@
+﻿EmployeeKey,EmployeeCode,EmployeeName,Department,JobRole,HireDate
+1,EMP-001,Julien Martin,Books,Sales Associate,2018-03-12
+2,EMP-002,Camille Bernard,Books,Sales Associate,2019-06-05
+3,EMP-003,Antoine Dubois,Books,Store Manager,2010-01-20
+4,EMP-004,Sophie Thomas,Music,Sales Associate,2020-09-10
+5,EMP-005,Nicolas Robert,Music,Sales Associate,2021-04-22
+6,EMP-006,Élodie Richard,Video,Sales Associate,2017-11-03
+7,EMP-007,Maxime Petit,Video,Sales Associate,2022-02-14
+8,EMP-008,Léa Durand,Gaming,Sales Associate,2019-08-30
+9,EMP-009,Théo Leroy,Gaming,Sales Associate,2020-05-18
+10,EMP-010,Clara Moreau,Gaming,Store Manager,2013-07-25
+11,EMP-011,Hugo Simon,TV & Audio,Sales Associate,2018-10-08
+12,EMP-012,Manon Laurent,TV & Audio,Sales Associate,2021-01-15
+13,EMP-013,Louis Lefebvre,TV & Audio,Sales Associate,2022-06-20
+14,EMP-014,Chloé Michel,Photo,Sales Associate,2019-03-12
+15,EMP-015,Romain Garcia,Photo,Store Manager,2012-04-18
+16,EMP-016,Emma David,Computing,Sales Associate,2020-11-02
+17,EMP-017,Lucas Bertrand,Computing,Sales Associate,2021-09-27
+18,EMP-018,Sarah Roux,Computing,Sales Associate,2022-04-04
+19,EMP-019,Alexandre Vincent,Computing,Store Manager,2011-12-01
+20,EMP-020,Marion Fournier,Smartphones,Sales Associate,2019-05-16
+21,EMP-021,Baptiste Morel,Smartphones,Sales Associate,2020-08-11
+22,EMP-022,Inès Girard,Smartphones,Sales Associate,2022-10-05
+23,EMP-023,Paul André,Home Appliances,Sales Associate,2018-06-09
+24,EMP-024,Anaïs Lambert,Home Appliances,Sales Associate,2021-02-28
+25,EMP-025,Yanis Bonnet,Cashier,Cashier,2022-07-07
+26,EMP-026,Léna François,Cashier,Cashier,2023-01-30
+27,EMP-027,Enzo Mercier,Cashier,Cashier,2023-05-15
+28,EMP-028,Camille Blanc,Online,Sales Associate,2020-02-12
+29,EMP-029,Nathan Guerin,Online,Sales Associate,2021-06-24
+30,EMP-030,Zoé Boyer,Online,Store Manager,2015-09-03

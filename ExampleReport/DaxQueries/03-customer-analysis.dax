@@ -1,0 +1,83 @@
+// ============================================================
+// Sales Retail — Customer Analysis DAX Queries
+// ============================================================
+
+
+// -----------------------------------------------------------------
+// Q1. Customer count, revenue, and basket size by loyalty segment
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimCustomer[LoyaltySegment],
+        "Number of Customers",         [Number of Customers],
+        "Total Revenue",               [Total Revenue],
+        "Average Revenue per Customer",[Average Revenue per Customer],
+        "Orders per Customer",         [Orders per Customer]
+    )
+    ORDER BY [Total Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q2. Segment × Age Group cross-tab — spend distribution
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimCustomer[LoyaltySegment],
+        DimCustomer[AgeGroup],
+        "Number of Customers", [Number of Customers],
+        "Total Revenue",       [Total Revenue]
+    )
+    ORDER BY DimCustomer[LoyaltySegment], DimCustomer[AgeGroup]
+
+
+// -----------------------------------------------------------------
+// Q3. Top 20 customers by revenue with rank
+// -----------------------------------------------------------------
+EVALUATE
+    TOPN(
+        20,
+        ADDCOLUMNS(
+            SUMMARIZE(
+                FactSales,
+                DimCustomer[CustomerCode],
+                DimCustomer[CustomerName],
+                DimCustomer[LoyaltySegment],
+                DimCustomer[City]
+            ),
+            "Revenue",         [Total Revenue],
+            "Number of Orders",[Number of Orders],
+            "Rank",            RANKX(
+                                    ALL(DimCustomer[CustomerName]),
+                                    [Total Revenue],
+                                    ,
+                                    DESC,
+                                    DENSE
+                                )
+        ),
+        [Revenue], DESC
+    )
+    ORDER BY [Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q4. New customer signups per year (based on DimCustomer[SignupDate])
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimDate[Year],
+        "New Signups", [New Customers (Signup)]
+    )
+    ORDER BY DimDate[Year]
+
+
+// -----------------------------------------------------------------
+// Q5. Customer geography: revenue per city
+// -----------------------------------------------------------------
+EVALUATE
+    SUMMARIZECOLUMNS(
+        DimCustomer[City],
+        "Number of Customers",[Number of Customers],
+        "Total Revenue",      [Total Revenue],
+        "Average Basket",     [Average Revenue per Customer]
+    )
+    ORDER BY [Total Revenue] DESC

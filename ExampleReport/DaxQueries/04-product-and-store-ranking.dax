@@ -1,0 +1,92 @@
+// ============================================================
+// Sales Retail — Product & Store Ranking DAX Queries
+// ============================================================
+
+
+// -----------------------------------------------------------------
+// Q1. Top 10 products by revenue, with rank and share of total
+// -----------------------------------------------------------------
+EVALUATE
+    VAR AllRevenue = CALCULATE([Total Revenue], ALL(DimProduct))
+    RETURN
+    TOPN(
+        10,
+        ADDCOLUMNS(
+            VALUES(DimProduct[ProductName]),
+            "Revenue",   [Total Revenue],
+            "Units",     [Total Units Sold],
+            "Rank",      [Product Rank by Revenue],
+            "% of Total",DIVIDE([Total Revenue], AllRevenue)
+        ),
+        [Revenue], DESC
+    )
+    ORDER BY [Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q2. Product category ranking (revenue + margin %)
+// -----------------------------------------------------------------
+EVALUATE
+    ADDCOLUMNS(
+        VALUES(DimProduct[Category]),
+        "Revenue",       [Total Revenue],
+        "Gross Profit",  [Gross Profit],
+        "Gross Margin %",[Gross Margin %],
+        "Rank",          [Category Rank by Revenue]
+    )
+    ORDER BY [Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q3. Products with the highest gross margin percentage (min 100 units sold)
+// -----------------------------------------------------------------
+EVALUATE
+    FILTER(
+        ADDCOLUMNS(
+            VALUES(DimProduct[ProductName]),
+            "Units",         [Total Units Sold],
+            "Revenue",       [Total Revenue],
+            "Gross Margin %",[Gross Margin %]
+        ),
+        [Units] >= 100
+    )
+    ORDER BY [Gross Margin %] DESC
+
+
+// -----------------------------------------------------------------
+// Q4. Store ranking with revenue per square meter
+// -----------------------------------------------------------------
+EVALUATE
+    ADDCOLUMNS(
+        SUMMARIZE(
+            FactSales,
+            DimStore[StoreName],
+            DimStore[City],
+            DimStore[StoreType],
+            DimStore[FloorAreaSqm]
+        ),
+        "Revenue",         [Total Revenue],
+        "Number of Orders",[Number of Orders],
+        "Rank",            [Store Rank by Revenue],
+        "Revenue per sqm", DIVIDE([Total Revenue], DimStore[FloorAreaSqm])
+    )
+    ORDER BY [Revenue] DESC
+
+
+// -----------------------------------------------------------------
+// Q5. Employee leaderboard — sales per associate
+// -----------------------------------------------------------------
+EVALUATE
+    TOPN(
+        15,
+        SUMMARIZECOLUMNS(
+            DimEmployee[EmployeeName],
+            DimEmployee[Department],
+            DimEmployee[JobRole],
+            "Number of Orders", [Number of Orders],
+            "Total Revenue",    [Total Revenue],
+            "Average Order Value",[Average Order Value]
+        ),
+        [Total Revenue], DESC
+    )
+    ORDER BY [Total Revenue] DESC
