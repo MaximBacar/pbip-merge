@@ -3,7 +3,6 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from pbip_diff.diff import MISSING
 from pbip_diff.merge import (
     BOTH, CURRENT, INCOMING, MERGE, Decision, build_session, merge_file, merge_json, unmerged_paths,
 )

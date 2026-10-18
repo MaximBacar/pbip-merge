@@ -37,6 +37,41 @@ The project is found automatically from the current folder.
 Only the PBIR format is drawn (`definition/pages/.../visual.json`). For older projects, turn on
 *Preview features → Store reports using enhanced metadata format (PBIR)* in Power BI Desktop and save.
 
+## Resolving merge conflicts: `pbip-merge`
+
+```sh
+git merge feature          # stops with conflicts in visual.json / .tmdl files
+uv run pbip-merge          # opens the resolver in your browser
+git commit                 # after "Apply resolution"
+```
+
+For each conflicted file pick **Keep current** (your branch, HEAD), **Keep incoming**
+(the branch being merged) or **Merge**. Each page shows Current | Result | Incoming canvases.
+
+How **Merge** works:
+- JSON is merged property by property, not line by line. Edits to different properties of the
+  same visual (one moves it, the other renames it) combine without a conflict, even when git
+  reported one.
+- Fields and filters are matched by id, so fields added on both sides are both kept. Page order
+  is merged as a list. `activePageName` never conflicts.
+- Only a property changed differently on both sides is a conflict: pick current or incoming for it.
+- Model files (`.tmdl`) use git's line merge; each conflict can take current, incoming or both.
+- Visuals that end up overlapping after the merge are flagged.
+- A file deleted on one side and changed on the other: keep current or incoming.
+
+Other modes:
+
+```sh
+uv run pbip-merge feature                     # preview merging `feature` into HEAD (writes nothing)
+uv run pbip-merge --accept merge              # no browser; fails if a real conflict remains
+uv run pbip-merge --folders base/ current/ incoming/ -o merged/   # three folders, no git
+```
+
+The resolver runs on 127.0.0.1 only. "Apply" writes the files and `git add`s them; it never commits.
+
+Try it: `uv run python scripts/make_merge_demo.py ExampleReport /tmp/pbip-merge-demo`, then run
+`uv run --project ~/Developer/pbip-merge pbip-merge` inside that folder.
+
 ## Try it without Power BI
 
 ```sh
@@ -53,6 +88,8 @@ cd /tmp/pbip-demo && uv run --project ~/Developer/pbip-merge pbip-diff HEAD~1 HE
 | `src/pbip_diff/diff.py`   | JSON diff, classify changes (moved, fields, formatting, filters…) |
 | `src/pbip_diff/textdiff.py` | Side-by-side line diff with word highlights |
 | `src/pbip_diff/render.py` | Self-contained HTML output, no JavaScript |
-| `src/pbip_diff/cli.py`    | Command line |
+| `src/pbip_diff/cli.py`    | `pbip-diff` command |
+| `src/pbip_diff/merge.py`  | Three-way merge (JSON by property, text by line) |
+| `src/pbip_diff/mergeui.py` / `mergecli.py` | Resolver page and `pbip-merge` command (local server) |
 
 Tests: `uv run pytest`.

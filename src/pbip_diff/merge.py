@@ -390,8 +390,7 @@ class MergeSession:
             data = f.result(d.strategy or CURRENT, d.choices)
             target = self.project / f.path
             if data is None:
-                if target.exists():
-                    target.unlink()
+                _delete(target, self.project)
                 _git(self.repo, "rm", "-q", "--cached", "--ignore-unmatch", "--", str(target))
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
@@ -410,13 +409,23 @@ class MergeSession:
         for path, data in self.overrides(decisions).items():
             target = out_dir / path
             if data is None:
-                if target.exists():
-                    target.unlink()
+                _delete(target, out_dir)
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(data)
             written.append(path)
         return written
+
+
+def _delete(target: Path, root: Path) -> None:
+    """Delete a file and the folders it leaves empty (a visual folder without
+    visual.json would confuse Power BI)."""
+    if target.exists():
+        target.unlink()
+    parent = target.parent
+    while parent != root and parent.is_dir() and not any(parent.iterdir()):
+        parent.rmdir()
+        parent = parent.parent
 
 
 def _git(repo: Path, *args: str) -> str:
