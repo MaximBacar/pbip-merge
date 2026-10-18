@@ -1,0 +1,144 @@
+{
+  "name": "pbip-visual-diff",
+  "displayName": "PBIP Visual Diff",
+  "description": "See Power BI (PBIP / PBIR) report changes as before/after canvases instead of JSON, and resolve merge conflicts visually.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "SCM Providers",
+    "Visualization"
+  ],
+  "main": "./extension.js",
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "workspaceContains:**/*.pbip",
+    "workspaceContains:**/definition.pbir"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "pbip.openVisualDiff",
+        "title": "Open Visual Diff",
+        "category": "PBIP",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "pbip.showReportDiff",
+        "title": "Show Report Changes (HEAD ↔ Working Tree)",
+        "category": "PBIP",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "pbip.compareWithRef",
+        "title": "Compare Report with Branch or Commit…",
+        "category": "PBIP"
+      },
+      {
+        "command": "pbip.resolveConflicts",
+        "title": "Resolve Merge Conflicts Visually",
+        "category": "PBIP",
+        "icon": "$(git-merge)"
+      },
+      {
+        "command": "pbip.previewMerge",
+        "title": "Preview Merging a Branch…",
+        "category": "PBIP"
+      },
+      {
+        "command": "pbip.openTextDiff",
+        "title": "Open Text Diff",
+        "category": "PBIP",
+        "icon": "$(diff)"
+      }
+    ],
+    "menus": {
+      "scm/resource/context": [
+        {
+          "command": "pbip.openVisualDiff",
+          "when": "scmProvider == git && scmResourceGroup =~ /^(workingTree|index|untracked)$/ && resourcePath =~ /\\.(Report|SemanticModel)[\\\\/]/",
+          "group": "navigation@0"
+        },
+        {
+          "command": "pbip.resolveConflicts",
+          "when": "scmProvider == git && scmResourceGroup == merge && resourcePath =~ /\\.(Report|SemanticModel)[\\\\/]/",
+          "group": "navigation@0"
+        }
+      ],
+      "scm/resource/inline": [
+        {
+          "command": "pbip.openVisualDiff",
+          "when": "scmProvider == git && scmResourceGroup =~ /^(workingTree|index)$/ && resourcePath =~ /\\.Report[\\\\/]/",
+          "group": "inline@0"
+        },
+        {
+          "command": "pbip.resolveConflicts",
+          "when": "scmProvider == git && scmResourceGroup == merge && resourcePath =~ /\\.(Report|SemanticModel)[\\\\/]/",
+          "group": "inline@0"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "pbip.openVisualDiff",
+          "when": "resourcePath =~ /\\.Report[\\\\/]definition[\\\\/].*\\.json$/",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "pbip.showReportDiff",
+          "when": "resourceExtname == .pbip || resourceFilename =~ /\\.(Report|SemanticModel)$/",
+          "group": "navigation@9"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "pbip.openVisualDiff",
+          "when": "false"
+        },
+        {
+          "command": "pbip.openTextDiff",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "PBIP Visual Diff",
+      "properties": {
+        "pbip.replaceTextDiff": {
+          "type": "boolean",
+          "default": true,
+          "description": "When a JSON diff of a Power BI report file opens (e.g. clicking it in Source Control), show the visual diff instead."
+        },
+        "pbip.diffCommand": {
+          "type": "string",
+          "default": "pbip-diff",
+          "description": "Command that runs pbip-diff. Install with `uv tool install <path-to-pbip-merge>`, or set e.g. `uv run --project /path/to/pbip-merge pbip-diff`."
+        },
+        "pbip.mergeCommand": {
+          "type": "string",
+          "default": "pbip-merge",
+          "description": "Command that runs pbip-merge (same install as pbip-diff)."
+        },
+        "pbip.promptOnConflicts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Offer the visual resolver when a Power BI file with merge conflict markers is opened."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "check": "tsc -p jsconfig.json",
+    "package": "vsce package --skip-license --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^3.1.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -11,7 +11,7 @@ from .diff import MISSING, diff_page, json_diff
 from .merge import BOTH, CURRENT, INCOMING, MERGE, Conflict, Decision, FileMerge, MergeSession, TextConflict
 from .model import Page, Report, find_reports, load_report
 from .render import (
-    BRANCH, CHEVRON, CSS, FILE, FOLDER, LOGO, PAGE, REPORT, _icon, _id, canvas, change_table,
+    BRANCH, CHEVRON, CSS, FILE, FOLDER, LOGO, PAGE, REPORT, _icon, _id, _theme_attr, canvas, change_table,
     fmt_value, hover_css,
 )
 from .textdiff import split_table
@@ -216,6 +216,7 @@ def page_section(
 def render_merge(
     session: MergeSession, decisions: dict[str, Decision], labels: tuple[str, str], *,
     token: str, errors: list[str] = (), done: list[str] | None = None, can_apply: bool = True, note: str = "",
+    theme: str | None = None,
 ) -> str:
     result = session.result_source(decisions)
     sides = {"base": session.base, "current": session.current, "incoming": session.incoming, "result": result}
@@ -315,7 +316,7 @@ def render_merge(
     )
     progress = f"<span class='cnt s-{'ok' if resolved == total else 'conflict'}'>{resolved} / {total} files resolved</span>"
     return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en"{_theme_attr(theme)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(title)}</title>
 <style>{CSS}{MERGE_CSS}</style></head>

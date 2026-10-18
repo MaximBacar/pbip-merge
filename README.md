@@ -72,6 +72,18 @@ The resolver runs on 127.0.0.1 only. "Apply" writes the files and `git add`s the
 Try it: `uv run python scripts/make_merge_demo.py ExampleReport /tmp/pbip-merge-demo`, then run
 `uv run --project ~/Developer/pbip-merge pbip-merge` inside that folder.
 
+## VS Code extension
+
+`vscode-extension/` shows these pages inside VS Code. Clicking a changed report file in
+Source Control opens the visual diff (scrolled to that visual) instead of the JSON diff, and
+conflicted files can be resolved in a VS Code tab. See [vscode-extension/README.md](vscode-extension/README.md).
+
+```sh
+uv tool install .                               # puts pbip-diff / pbip-merge on PATH
+cd vscode-extension && npx @vscode/vsce package --skip-license --allow-missing-repository
+code --install-extension pbip-visual-diff-0.1.0.vsix
+```
+
 ## Try it without Power BI
 
 ```sh

@@ -264,7 +264,7 @@ def _lines(v: Visual | None) -> list[str]:
 def file_block(
     fid: str, status: str, title: str, path: str, stats: tuple[int, int],
     body: str, *, extra_head: str = "", folded: bool = False, viewed: bool = True,
-    toggle: tuple[str, str] | None = None, cls: str = "", data_v: str = "",
+    toggle: tuple[str, str] | None = None, cls: str = "", data_v: str = "", data_path: str = "",
 ) -> str:
     """One GitHub-style file: sticky header + collapsible body.
 
@@ -286,6 +286,7 @@ def file_block(
     )
     a, r = stats
     dv = f' data-v="{escape(data_v)}"' if data_v else ""
+    dv += f' data-path="{escape(data_path or path)}"'
     return f"""<section class="file s-{status} {cls}" id="{fid}"{dv}>{fold}{modes}
 <header class="file-head">
   <label for="fold-{fid}" class="chevbtn" title="Toggle">{CHEVRON}</label>
@@ -446,7 +447,11 @@ def viewed_css(diff: ProjectDiff, total: int) -> str:
 # ---------------------------------------------------------------- page
 
 
-def render(diff: ProjectDiff, title: str = "PBIP diff") -> str:
+def _theme_attr(theme: str | None) -> str:
+    return f' data-theme="{theme}"' if theme in ("light", "dark") else ""
+
+
+def render(diff: ProjectDiff, title: str = "PBIP diff", theme: str | None = None) -> str:
     visual_diffs = [(r, p, d) for r in diff.reports for p in r.pages for d in p.visuals if d.status in CHANGED]
     added = removed = 0
     for _, _, d in visual_diffs:
@@ -486,7 +491,7 @@ def render(diff: ProjectDiff, title: str = "PBIP diff") -> str:
     ) + "<span><i class='ghostkey'></i>Previous position</span>"
 
     return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en"{_theme_attr(theme)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(title)}</title>
 <style>{CSS}</style></head>
@@ -530,7 +535,7 @@ CSS = """
   --appbar:56px;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root{
+@media (prefers-color-scheme: dark){:root:not([data-theme=light]){
   --bg:#0d1117;--bg-subtle:#151b23;--bg-inset:#010409;--canvas:#161b22;
   --fg:#f0f6fc;--muted:#9198a1;--border:#3d444d;--border-muted:#3d444db3;
   --accent:#4493f8;--focus:#4493f8;
@@ -542,6 +547,18 @@ CSS = """
   --status:#1f6feb;--status-fg:#ffffff;
   color-scheme:dark;
 }}
+:root[data-theme=dark]{
+  --bg:#0d1117;--bg-subtle:#151b23;--bg-inset:#010409;--canvas:#161b22;
+  --fg:#f0f6fc;--muted:#9198a1;--border:#3d444d;--border-muted:#3d444db3;
+  --accent:#4493f8;--focus:#4493f8;
+  --add:#3fb950;--del:#f85149;--mod:#d29922;--move:#4493f8;--bad:#ab7df8;--neutral:#656c76;
+  --add-bg:#2ea04326;--del-bg:#f8514926;--mod-bg:#bb800926;--move-bg:#388bfd26;--bad-bg:#ab7df826;
+  --add-line:#2ea04326;--add-num:#3fb9504d;--add-word:#2ea04366;
+  --del-line:#f851491a;--del-num:#f851494d;--del-word:#f8514966;
+  --hunk:#388bfd1a;--hunk-fg:#9198a1;--empty:#151b23;
+  --status:#1f6feb;--status-fg:#ffffff;
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(var(--appbar) + 52px)}
 body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;counter-reset:viewed}
@@ -604,7 +621,14 @@ main{padding:16px 24px 64px;min-width:0}
   background:var(--bg-subtle);border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;font-size:13px;min-width:0;flex-wrap:wrap}
 .vfile .file-head{position:static;min-height:40px}
 .fname{display:inline-flex;align-items:center;gap:6px;font-weight:600;white-space:nowrap}
-.fpath{font:12px var(--mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:0 1 auto;max-width:48ch}
+.fpath{font:12px var(--mono);color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1 1 0}
+@media (min-width:901px){
+  .file-head{flex-wrap:nowrap}
+  .file-head>*{flex-shrink:0}
+  .file-head>.fname{flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .file-head>.fpath{flex:1 1 0}
+  .file-head>.grow{display:none}
+}
 .chevbtn{display:grid;place-items:center;width:28px;height:28px;border-radius:6px;cursor:pointer}
 .chevbtn:hover{background:var(--border-muted)}
 .chevbtn .chev{transition:transform .12s}
@@ -709,6 +733,31 @@ tr.hunk td{background:var(--hunk);color:var(--hunk-fg);padding-top:4px;padding-b
 .statusbar .ic,.statusbar .si{color:var(--status-fg)}
 .statusbar .cnt{color:var(--status-fg);font-weight:400}
 main{padding-bottom:56px}
+
+/* Inside a VS Code webview: follow the editor theme */
+body[class*="vscode-"]{
+  --bg:var(--vscode-editor-background);--bg-subtle:var(--vscode-sideBar-background,var(--vscode-editor-background));
+  --bg-inset:var(--vscode-editor-background);--canvas:var(--vscode-editorWidget-background,var(--vscode-editor-background));
+  --fg:var(--vscode-foreground);--muted:var(--vscode-descriptionForeground);
+  --border:var(--vscode-panel-border,var(--vscode-editorGroup-border));--border-muted:var(--vscode-editorGroup-border,var(--vscode-panel-border));
+  --accent:var(--vscode-textLink-foreground);--focus:var(--vscode-focusBorder);
+  --add:var(--vscode-gitDecoration-addedResourceForeground);--del:var(--vscode-gitDecoration-deletedResourceForeground);
+  --mod:var(--vscode-gitDecoration-modifiedResourceForeground);--move:var(--vscode-charts-blue,#3794ff);
+  --bad:var(--vscode-gitDecoration-conflictingResourceForeground);--neutral:var(--vscode-disabledForeground,#888);
+  --add-bg:color-mix(in srgb,var(--add) 16%,transparent);--del-bg:color-mix(in srgb,var(--del) 16%,transparent);
+  --mod-bg:color-mix(in srgb,var(--mod) 16%,transparent);--move-bg:color-mix(in srgb,var(--move) 16%,transparent);
+  --bad-bg:color-mix(in srgb,var(--bad) 16%,transparent);
+  --add-line:var(--vscode-diffEditor-insertedLineBackground,color-mix(in srgb,var(--add) 14%,transparent));
+  --del-line:var(--vscode-diffEditor-removedLineBackground,color-mix(in srgb,var(--del) 14%,transparent));
+  --add-word:var(--vscode-diffEditor-insertedTextBackground);--del-word:var(--vscode-diffEditor-removedTextBackground);
+  --add-num:color-mix(in srgb,var(--add) 24%,transparent);--del-num:color-mix(in srgb,var(--del) 24%,transparent);
+  --hunk:color-mix(in srgb,var(--accent) 12%,transparent);--hunk-fg:var(--muted);--empty:color-mix(in srgb,var(--fg) 4%,transparent);
+  --status:var(--vscode-statusBar-background);--status-fg:var(--vscode-statusBar-foreground);
+  --mono:var(--vscode-editor-font-family);
+  font-family:var(--vscode-font-family);font-size:var(--vscode-font-size);
+}
+body[class*="vscode-"] .appbar{--appbar:48px}
+.flash-focus{box-shadow:0 0 0 2px var(--focus)!important;transition:box-shadow .3s}
 
 @media (max-width:1100px){.panes{grid-template-columns:1fr}}
 @media (max-width:900px){

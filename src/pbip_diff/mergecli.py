@@ -17,7 +17,7 @@ import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlparse
 
 from .cli import find_project
 from .merge import (
@@ -52,7 +52,7 @@ def apply(session: MergeSession, decisions: dict[str, Decision], output: Path | 
 
 def serve(session: MergeSession, labels, *, can_apply: bool, output: Path | None, note: str, port: int, open_browser: bool) -> None:
     token = secrets.token_urlsafe(16)
-    state = {"decisions": session.default_decisions()}
+    state = {"decisions": session.default_decisions(), "theme": None}
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):  # keep the terminal quiet
@@ -68,11 +68,18 @@ def serve(session: MergeSession, labels, *, can_apply: bool, output: Path | None
             self.wfile.write(body)
 
         def _page(self, **kw) -> str:
-            return render_merge(session, state["decisions"], labels, token=token, can_apply=can_apply, note=note, **kw)
+            return render_merge(
+                session, state["decisions"], labels, token=token, can_apply=can_apply, note=note,
+                theme=state["theme"], **kw,
+            )
 
         def do_GET(self):
-            if self.path.split("?")[0] != "/":
+            url = urlparse(self.path)
+            if url.path != "/":
                 return self._send("Not found", 404)
+            theme = parse_qs(url.query).get("theme", [None])[-1]
+            if theme in ("light", "dark"):  # e.g. from the VS Code extension
+                state["theme"] = theme
             self._send(self._page())
 
         def do_POST(self):
@@ -89,7 +96,7 @@ def serve(session: MergeSession, labels, *, can_apply: bool, output: Path | None
                     written = apply(session, state["decisions"], output)
                 except Exception as exc:  # show it in the page rather than crash the server
                     return self._send(self._page(errors=[str(exc)]))
-                print(f"Applied resolution to {len(written)} file(s).")
+                print(f"Applied resolution to {len(written)} file(s).", flush=True)
                 self._send(self._page(done=written))
                 threading.Timer(0.5, server.shutdown).start()
                 return
@@ -97,7 +104,7 @@ def serve(session: MergeSession, labels, *, can_apply: bool, output: Path | None
 
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     url = f"http://127.0.0.1:{server.server_address[1]}/"
-    print(f"Merge resolver running at {url}  (Ctrl+C to stop)")
+    print(f"Merge resolver running at {url}  (Ctrl+C to stop)", flush=True)
     if open_browser:
         webbrowser.open(url)
     try:
